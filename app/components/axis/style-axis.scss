@@ -1,0 +1,20 @@
+@import '~material-colors/dist/colors';
+.axis {
+    fill: none;
+    stroke: #000;
+    shape-rendering: crispEdges;
+}
+
+.axis text {
+    fill: #000;
+    stroke: none;
+}
+
+.axis line {
+    stroke: $md-grey-300;
+    stroke-dasharray: 1.5,1;
+}
+
+.axis path {
+    stroke: #ccc;
+}
