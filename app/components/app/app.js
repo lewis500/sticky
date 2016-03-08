@@ -8,7 +8,7 @@ const AppComponent = React.createClass({
 	render() {
 		return (
 			<div className='flex-container-row main'>
-				<button className='button' onClick={this.props.trade}/>
+				<button className='button' onClick={this.props.trade}>Trade</button>
 				<svg width='500' height='500'>
 					<g transform='translate(250,250)'>
 						{_.map(this.props.traders, (d,i,k)=>{
@@ -17,6 +17,7 @@ const AppComponent = React.createClass({
 									key={d.id}
 									r='10'
 									className='trader'
+									onClick={this.props.trade}
 									transform={`rotate(${i*360/k.length}) translate(${-200},0)`}/>
 								);
 						})}
