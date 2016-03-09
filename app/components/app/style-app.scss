@@ -61,4 +61,5 @@ input[type=range] {
 
 .trader{
     fill: $md-light-blue-500;
+    transition: transform .5s ease-in-out;
 }
