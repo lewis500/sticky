@@ -55,7 +55,7 @@ input[type=range] {
 }
 
 .trader {
-    fill: $md-red-300;
+    fill: $md-light-blue-400;
     transition: transform .5s ease-in-out;
     filter: url(#f4);
     stroke: white;
@@ -63,7 +63,7 @@ input[type=range] {
 }
 
 body {
-    background-color: rgba($md-grey-400, .9);
+    background-color: rgba($md-grey-300, .9);
 }
 
 .bg{
@@ -74,23 +74,21 @@ body {
 .money,
 .good {
     stroke: white;
-    stroke-width: .8px;
+    stroke-width: 1.2px;
     filter: url(#f3);
     pointer-events: none;
 }
 
 .money {
-    fill: $md-light-green-600;
-}
-
-.money.trade{
     fill: $md-green-500;
 }
 
-.good {
-    fill: $md-light-blue-500;
+.money.trade{
+    // fill: $md-green-300;
+    // stroke: black;
+    fill: $md-green-600;
 }
 
-.trade{
-    stroke-width: 1.6px;
+.good {
+    fill: $md-red-400;
 }
