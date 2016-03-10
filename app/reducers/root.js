@@ -26,7 +26,6 @@ const mu = 18;
 const cutoff0 = .8;
 const cutoff1 = 1.5;
 
-
 const reduceTick = (state, action) => {
 	let trades = [],
 		dt = action.dt / 1000,
