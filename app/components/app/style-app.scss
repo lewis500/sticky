@@ -63,7 +63,7 @@ input[type=range] {
 }
 
 body {
-    background-color: rgba($md-grey-300, .9);
+    background-color: rgba($md-grey-300, 1);
 }
 
 .bg{
@@ -91,4 +91,12 @@ body {
 
 .good {
     fill: $md-red-400;
+}
+
+
+.price.label{
+    font-size: 10px;
+    text-anchor: middle;
+    alignment-baseline: central;
+    fill: white;
 }
