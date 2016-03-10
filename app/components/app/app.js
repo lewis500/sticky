@@ -9,57 +9,27 @@ import d3Timer from 'd3-timer';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 const { circle } = React.DOM;
 
+const arc = d3.svg.arc()
+	.innerRadius(18)
+	.outerRadius(22)
+	.startAngle(0)
+	.endAngle(d => d / 20 * Math.PI * 2);
+
 const Wealth = React.createClass({
 	mixins: [PureRenderMixin],
 	selection: null,
-	update(money) {
-		let circles = this.selection
-			.selectAll('circle.money')
-			.data(_.range(money));
-
-		circles //NEW MONEY
-			.enter()
-			.append('circle')
-			.attr({
-				r: 0,
-				class: 'money',
-				cy: 25,
-			})
-			.transition('u')
-			.delay(750)
-			.ease('cubic-out')
-			.duration(150)
-			.attr({
-				r: 4,
-			});
-
-		circles //ROTATE OLD CIRCLES
-			.transition('p')
-			.delay(() => money > this.props.money ? 725 : 0)
-			.ease('elastic')
-			.duration(600)
-			.attr('transform', (d, i, k) => {
-				let z = i * 360 / money;
-				return `rotate(${z})`
-			});
-
-		circles
-			.exit()
-			// .transition('remove')
-			// .duration(125)
-			// .ease('cubic')
-			// .attr('cy', 0)
-			.remove();
-	},
-	componentWillReceiveProps(nextProps) {
-		if (this.refs.gWealth) this.update(nextProps.money);
+	update(oldMoney, newMoney) {
+		this.selection.attr('d', arc(newMoney));
 	},
 	componentDidMount() {
-		this.selection = d3.select(this.refs.gWealth);
-		this.update(this.props.money);
+		this.selection = d3.select(this.refs.path);
+		this.selection.attr('d', arc(this.props.money));
+	},
+	componentWillReceiveProps(nextProps) {
+		if (this.selection) this.update(this.props.money, nextProps.money)
 	},
 	render() {
-		return <g ref='gWealth'></g>
+		return <path ref='path' className='money arc'/>
 	}
 });
 
@@ -70,6 +40,7 @@ const TradeCircle = React.createClass({
 		if (!this.props.trade) return;
 		let buyer = d3.select(`g.id-${this.props.trade.buyer_id}`),
 			seller = d3.select(`g.id-${this.props.trade.seller_id}`);
+
 		buyer.select('circle.trader')
 			.transition('asdf')
 			.ease('cubic')
@@ -96,12 +67,11 @@ const TradeCircle = React.createClass({
 				class: 'money trade'
 			})
 			.transition('grow')
-			.delay(125)
-			.duration(125)
+			.duration(100)
 			.attr('r', 6)
 			.transition('z')
-			.ease('cubic')
-			.duration(600)
+			.ease('sin')
+			.duration(400)
 			.attr({
 				transform: seller.attr('transform')
 			})
@@ -121,18 +91,18 @@ const TradeCircle = React.createClass({
 				class: 'good trade'
 			})
 			.transition('grow')
-			.delay(125)
-			.duration(125)
+			// .delay(125)
+			.duration(100)
 			.attr('r', 6)
 			.transition('z')
-			.ease('cubic')
-			.duration(600)
+			.ease('sin')
+			.duration(400)
 			.attr({
 				transform: buyer.attr('transform')
 			})
 			.each('end', () => {
 				good.transition('q3')
-					.duration(160)
+					.duration(130)
 					.ease('cubic')
 					.attr('r', 0)
 					.remove();
@@ -159,12 +129,12 @@ const AppComponent = React.createClass({
 			let last = 0,
 				dt = 0;
 			let t = d3Timer
-				.interval(elapsed => {
+				.timer(elapsed => {
 					dt = elapsed - last;
 					last = elapsed;
 					if (this.state.paused) t.stop();
 					this.props.tick(dt);
-				}, 50);
+				});
 		}
 		this.setState({ paused: paused })
 	},
@@ -187,7 +157,7 @@ const AppComponent = React.createClass({
 											<Wealth money={d.money }/>
 											{circle({
 												className: `trader`,
-												r: 15,
+												r: 13,
 												key: d.id,
 												ref: d.id,
 											})}

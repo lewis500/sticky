@@ -55,7 +55,7 @@ input[type=range] {
 }
 
 .trader {
-    fill: $md-light-blue-400;
+    fill: $md-red-300;
     transition: transform .5s ease-in-out;
     filter: url(#f4);
     stroke: white;
@@ -74,21 +74,23 @@ body {
 .money,
 .good {
     stroke: white;
-    stroke-width: 1.2px;
+    stroke-width: .8px;
     filter: url(#f3);
     pointer-events: none;
 }
 
 .money {
-    fill: $md-green-500;
+    fill: $md-light-green-600;
 }
 
 .money.trade{
-    // fill: $md-green-300;
-    // stroke: black;
-    fill: $md-green-600;
+    fill: $md-green-500;
 }
 
 .good {
-    fill: $md-red-400;
+    fill: $md-light-blue-500;
+}
+
+.trade{
+    stroke-width: 1.6px;
 }

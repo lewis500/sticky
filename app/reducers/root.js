@@ -1,18 +1,25 @@
 import d3 from 'd3';
 import _ from 'lodash';
 
-const traders = _.map(_.range(10), i => {
+const traders = _.map(_.range(15), i => {
 	return {
 		id: i,
 		money: 4,
-		β: 2
+		β: 1.5
 	};
 });
+
+const reduceAvg()=>{
+	
+
+}
 
 const initialState = {
 	traders,
 	trade: null
 };
+
+
 
 const reduceTick = (state, action) => {
 	let traders = state.traders.slice();
