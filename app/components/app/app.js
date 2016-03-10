@@ -8,51 +8,68 @@ import d3Ease from 'd3-ease';
 import d3Timer from 'd3-timer';
 const { circle } = React.DOM;
 
-const D3Circle = React.createClass({
-	getInitialState: function() {
-		return {
-			rotate: this.props.rotate, //the initial rotation
-		};
-	},
-	duration: 200,
-	_timer: null,
-	componentWillUnmount() {
-		this._timer.stop();
-	},
+// x: (matrix.a * x) + (matrix.c * y) + matrix.e - offset.left,
+// 	y: (matrix.b * x) + (matrix.d * y) + matrix.f - offset.top
+
+const TradeCircle = React.createClass({
 	componentWillReceiveProps(nextProps) {
-		if (this._timer) this._timer.stop();
-		let a = this.state.rotate,
-			b = nextProps.rotate,
-			θ = 0;
-		this._timer = d3Timer.timer(elapsed => {
-			θ = d3Ease.easeLinear(elapsed / this.duration);
-			this.setState({
-				rotate: a * (1 - θ) + θ * b
+		let a = d3.select(`circle.id-${nextProps.trade.buyer_id}`),
+			b = d3.select(`circle.id-${nextProps.trade.seller_id}`);
+		a.transition()
+			.ease('back')
+			.attr('transform', a.attr('transform') + ' scale(1.25)')
+			.transition()
+			.ease('bounce')
+			.duration(800)
+			.attr('transform', `translate(${d3.transform(a.attr('transform')).translate})`);
+		let added = this.selection.append('circle')
+			.attr({
+				transform: a.attr('transform'),
+				r: 5,
+				class: 'trade-circle'
+			})
+			.transition()
+			.ease('back-in')
+			.duration(800)
+			.attr({
+				transform: b.attr('transform')
+			})
+			.each('end', () => {
+				added.transition()
+					.duration(200)
+					.attr('r',0)
+					// .transition()
+					.remove();
 			});
-			if (elapsed > this.duration) this._timer.stop();
-		});
+	},
+	componentDidMount() {
+		this.selection = d3.select(this.refs.gTrade);
 	},
 	render() {
-		return circle({
-			className: 'trader',
-			r: 10,
-			cx: -50,
-			transform: `rotate(${this.state.rotate})`
-		});
+		return <g ref='gTrade'></g>
 	}
 });
 
 const AppComponent = React.createClass({
 	render() {
+		let trade_circle;
 		return (
 			<div className='flex-container-row main'>
-				<button className='button' onClick={this.props.trade}>Trade</button>
-				<button className='button' onClick={this.props.deleteOne}>Delete</button>
 				<svg width='500' height='500'>
+					<rect width='500' height='500' className='bg'/>
 					<g transform='translate(250,250)'>
 						{_.map(this.props.traders, (d,i,k)=>{
-							return (<D3Circle rotate={i*360/k.length + this.props.numTrades*20} key={i}/>);
+									let R = 100;
+									return circle({
+										className: `trader id-${d.id}`,
+										r: 15,
+										key: d.id,
+										ref: d.id,
+										transform: `translate(${R*Math.cos(i/k.length*Math.PI*2)}, ${R*Math.sin(i/k.length*Math.PI*2)})`,
+										onClick: ()=> this.props.buy(d.id)
+									});
 						})}
+						<TradeCircle trade={this.props.trade} />
 					</g>
 				</svg>
 			</div>
@@ -65,15 +82,8 @@ const mapStateToProps = state => (state);
 // let i = 0;
 let λ = 3; //3 per second
 const mapActionsToProps = dispatch => ({
-	deleteOne() {
-		dispatch({ type: 'DELETE' });
-	},
-	trade() {
-		// let delay = -Math.log(Math.random()) / λ;
-		// d3.timer(() => {
-		dispatch({ type: 'TRADE' });
-		// 	return true;
-		// }, delay * 1000);
+	buy(buyer_id) {
+		dispatch({ type: 'BUY', buyer_id });
 	}
 });
 

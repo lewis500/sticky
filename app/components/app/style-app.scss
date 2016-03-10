@@ -62,4 +62,19 @@ input[type=range] {
 .trader{
     fill: $md-light-blue-500;
     transition: transform .5s ease-in-out;
+    filter: url(#f4);
+    stroke: white;
+    stroke-width: 2px;
+}
+
+.bg{
+    fill: rgba($md-grey-900,.5);
+    // fill: black;
+}
+
+.trade-circle{
+    fill: $md-amber-500;
+    filter: url(#f4);
+    stroke: white;
+    stroke-width: 1.5px;
 }
