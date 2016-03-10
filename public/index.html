@@ -20,7 +20,7 @@
   <div id="root"></div>
   <svg>
   	<defs>
-  	  <filter id="f4" x="-8%" y="-8%" width="300%" height="300%">
+  	  <filter id="f4" x="-12%" y="-12%" width="300%" height="300%">
   	    <feOffset result="offOut" in="SourceGraphic" dx=".29" dy=".28" />
   	    <feGaussianBlur result="blurOut" in="offOut" stdDeviation="1.0" />
   	    <feColorMatrix in="blurOut" result="color-out" type="matrix"
@@ -30,14 +30,14 @@
   	              0 0 0 .75 0"/>
   	    <feBlend in="SourceGraphic" in2="color-out" mode="normal" />
   	  </filter>
-  	<filter id="f3" x="0" y="0" width="200%" height="200%">
-  	  <feOffset result="offOut" in="SourceAlpha" dx=".5" dy=".25" />
-  	  <feGaussianBlur result="blurOut" in="offOut" stdDeviation=".8" />
+  	<filter id="f3" x="-35%" y="-35%" width="200%" height="200%">
+  	  <feOffset result="offOut" in="SourceGraphic" dx="0" dy="0" />
+  	  <feGaussianBlur result="blurOut" in="offOut" stdDeviation="1.0" />
   	  <feColorMatrix in="blurOut" result="color-out" type="matrix"
   	    values="0 0 0 0   0
   	            0 0 0 0   0 
   	            0 0 0 0   0 
-  	            0 0 0 .5 0"/>
+  	            0 0 0 .8 0"/>
   	  <feBlend in="SourceGraphic" in2="color-out" mode="normal" />
   	</filter>
   	</defs>

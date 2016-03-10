@@ -55,7 +55,6 @@ input[type=range] {
     height: 5px;
     width: 1px;
     bottom: 12px;
-    // bottom: 0px;
     background-color: #ccc;
 }
 
@@ -69,12 +68,22 @@ input[type=range] {
 
 .bg{
     fill: rgba($md-grey-900,.5);
-    // fill: black;
 }
 
 .trade-circle{
     fill: $md-amber-500;
     filter: url(#f4);
     stroke: white;
-    stroke-width: 1.5px;
+    stroke-width: 1.8px;
+    pointer-events: none;
+}
+
+.balance{
+    fill: $md-green-500;
+    stroke: white;
+    stroke-width: 1.2px;
+    filter: url(#f3);
+    pointer-events: none;
+
+
 }
