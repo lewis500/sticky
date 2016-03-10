@@ -9,10 +9,10 @@ const traders = _.map(_.range(15), i => {
 	};
 });
 
-const reduceAvg()=>{
+// const reduceAvg()=>{
 	
 
-}
+// }
 
 const initialState = {
 	traders,
