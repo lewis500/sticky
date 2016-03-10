@@ -1,16 +1,16 @@
 import d3 from 'd3';
 import _ from 'lodash';
 
-const initialTraders = _.map(_.range(15), i => {
-	return {
-		id: i,
-		money: 4,
-		β: 1,
-		price: 1,
-		last_sale: 0, //a time
-		last_price: 1
-	};
-});
+// const initialTraders = _.map(_.range(15), i => {
+// 	return {
+// 		id: i,
+// 		money: 4,
+// 		β: 1,
+// 		price: 1,
+// 		last_sale: 0, //a time
+// 		last_price: 1
+// 	};
+// });
 
 const initialState = {
 	traders: initialTraders,
@@ -20,6 +20,35 @@ const initialState = {
 	gdp: 0,
 	time: 0,
 	z: 0
+};
+
+const Trader = {
+	constructor(id) {
+		_.assign(this, {
+			id: id,
+			money: 4,
+			y: 1,
+			price: 1,
+			γ: 1 //fraction of income needed in reserve
+		});
+	},
+	purchase(dt, traders, price_index) {
+		let real_balance = this.money / price_index;
+		if (real_balance < this.γ * this.income) return null;
+		let planned_spending = real_balance / this.γ;
+		if (Math.random() > (dt * this.planned_spending)) return null;
+		let seller = _.sample(_.without(traders, this));
+		seller.sell(price_index);
+		this.money = this.money - seller.price;
+		let trade = { seller_id: seller.id, buyer_id: this.id };
+		return trade;
+	},
+	sell(dt){
+
+	},
+	calc_index(price_index){
+
+	}
 };
 
 const mu = 18;
@@ -70,7 +99,7 @@ const reduceTick = (state, action) => {
 	let history = _(state.history)
 		.filter(d => (d.time > (time - 8)))
 		.push({ time, spending: d3.sum(trades, d => d.price) }).value()
-	let gdp = d3.sum(history, d => d.spending/index) / 8;
+	let gdp = d3.sum(history, d => d.spending / index) / 8;
 	if ((state.z % 40) == 0) {
 		console.log(gdp);
 	}
