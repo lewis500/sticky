@@ -25,10 +25,6 @@
     margin: 0;
 }
 
-.main > div {
-    margin: 0px 30px;
-}
-
 div.is-slider {
     background-color: rgba($md-grey-100, .45);
     box-shadow: .15px .4px 1.5px .5px rgba($md-grey-400, .8);
@@ -42,7 +38,7 @@ input[type=range] {
     margin: 8px 0px;
 }
 
-.is-slider .ticks{
+.is-slider .ticks {
     position: absolute;
     width: 100%;
     height: 100%;
@@ -58,32 +54,41 @@ input[type=range] {
     background-color: #ccc;
 }
 
-.trader{
-    fill: $md-light-blue-500;
+.trader {
+    fill: $md-light-blue-400;
     transition: transform .5s ease-in-out;
     filter: url(#f4);
     stroke: white;
     stroke-width: 2px;
 }
 
+body {
+    background-color: rgba($md-grey-400, .9);
+}
+
 .bg{
-    fill: rgba($md-grey-900,.5);
+    fill: none;
 }
 
-.trade-circle{
-    fill: $md-amber-500;
-    filter: url(#f4);
-    stroke: white;
-    stroke-width: 1.8px;
-    pointer-events: none;
-}
 
-.balance{
-    fill: $md-green-500;
+.money,
+.good {
     stroke: white;
     stroke-width: 1.2px;
     filter: url(#f3);
     pointer-events: none;
+}
 
+.money {
+    fill: $md-green-500;
+}
 
+.money.trade{
+    // fill: $md-green-300;
+    // stroke: black;
+    fill: $md-green-600;
+}
+
+.good {
+    fill: $md-red-400;
 }

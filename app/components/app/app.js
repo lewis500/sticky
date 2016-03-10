@@ -1,94 +1,161 @@
 import { connect } from 'react-redux';
 import React from 'react';
 import { findDOMNode } from 'react-dom';
-import PureRenderMixin from 'react-addons-pure-render-mixin';
+// import PureRenderMixin from 'react-addons-pure-render-mixin';
 import d3 from 'd3';
 import './style-app.scss';
 import d3Ease from 'd3-ease';
 import d3Timer from 'd3-timer';
+import PureRenderMixin from 'react-addons-pure-render-mixin';
 const { circle } = React.DOM;
 
-const Balances = React.createClass({
+const Wealth = React.createClass({
+	mixins: [PureRenderMixin],
 	selection: null,
-	update(balance) {
+	update(money) {
 		let circles = this.selection
-			.selectAll('circle.balance')
-			.data(_.range(balance));
+			.selectAll('circle.money')
+			.data(_.range(money));
 
-		let newCircle = circles
+		circles //NEW MONEY
 			.enter()
 			.append('circle')
 			.attr({
 				r: 0,
-				class: 'balance',
+				class: 'money',
 				cy: 25,
 			})
 			.transition('u')
-			.delay(200)
+			.delay(800)
 			.ease('bounce-in')
-			.duration(500)
-			.attr('r', 4);
+			.duration(300)
+			.attr({
+				r: 4,
+				// cy: 25
+			});
 
-		circles
+		circles //ROTATE OLD CIRCLES
 			.transition('p')
+			.delay(() => money > this.props.money ? 725 : 0)
 			.ease('elastic')
-			.duration(750)
+			.duration(600)
 			.attr('transform', (d, i, k) => {
-				let z = i * 360 / balance;
+				let z = i * 360 / money;
 				return `rotate(${z})`
 			});
-		newCircle.transiti
-		circles.exit().remove();
+
+		circles
+			.exit()
+			.transition()
+			.duration(200)
+			.ease('cubic-out')
+			.attr('cy', 0)
+			.remove();
+	},
+	componentWillReceiveProps(nextProps) {
+		if (this.refs.gWealth) this.update(nextProps.money);
 	},
 	componentDidMount() {
-		this.selection = d3.select(this.refs.gBalances);
-		this.update(this.props.balance);
+		this.selection = d3.select(this.refs.gWealth);
+		this.update(this.props.money);
 	},
 	render() {
-		if (this.refs.gBalances) this.update(this.props.balance);
-		return <g ref='gBalances'></g>
+		return <g ref='gWealth'></g>
 	}
 });
 
 const TradeCircle = React.createClass({
 	selection: null,
-	componentWillReceiveProps(nextProps) {
-		let a = d3.select(`g.id-${nextProps.trade.buyer_id}`),
-			b = d3.select(`g.id-${nextProps.trade.seller_id}`);
-		a.select('circle')
-			.transition('a')
+	mixins: [PureRenderMixin],
+	componentDidUpdate() {
+		if (!this.props.trade) return;
+		let buyer = d3.select(`g.id-${this.props.trade.buyer_id}`),
+			seller = d3.select(`g.id-${this.props.trade.seller_id}`);
+		//make the 
+		buyer.select('circle.trader')
+			.transition('asdf')
 			.ease('cubic')
 			.attr('transform', 'scale(1.25)')
 			.transition()
 			.ease('bounce')
 			.duration(800)
 			.attr('transform', 'scale(1)');
-		a.selectAll('circle.balance')
+
+		seller.select('circle.trader')
+			.transition('asdf')
+			.ease('cubic')
+			.attr('transform', 'scale(1.25)')
+			.transition()
+			.ease('bounce')
+			.duration(800)
+			.attr('transform', 'scale(1)');
+
+		buyer.selectAll('circle.money')
 			.transition('b')
 			.delay(50)
 			.ease('cubic-in')
-			// .delay((d,i)=> Math.random()*20)
 			.duration((d, i) => Math.random() * 30 + 400)
 			.attr('cy', 28)
 			.transition('c')
 			.ease('bounce')
-			// .delay((d,i)=> Math.random()*20)
 			.duration((d, i) => 620 + Math.random() * 35)
 			.attr('cy', 25);
-		let added = this.selection.append('circle')
+
+		seller.selectAll('circle.money')
+			.transition('b')
+			.delay(50)
+			.ease('cubic-in')
+			.duration((d, i) => Math.random() * 30 + 400)
+			.attr('cy', 28)
+			.transition('c')
+			.ease('bounce')
+			.duration((d, i) => 620 + Math.random() * 35)
+			.attr('cy', 25);
+
+		let money = this.selection
+			.append('circle')
 			.attr({
-				transform: a.attr('transform'),
-				r: 5,
-				class: 'trade-circle'
+				transform: buyer.attr('transform'),
+				r: 0,
+				class: 'money trade'
 			})
-			.transition()
-			.ease('back-in')
-			.duration(800)
+			.transition('grow')
+			.delay(125)
+			.duration(125)
+			.attr('r', 6)
+			.transition('z')
+			.ease('back')
+			.duration(600)
 			.attr({
-				transform: b.attr('transform')
+				transform: seller.attr('transform')
 			})
 			.each('end', () => {
-				added.transition()
+				money.transition('q2')
+					.duration(120)
+					.ease('cubic')
+					.attr('r', 0)
+					.remove();
+			});
+
+		let good = this.selection
+			.append('circle')
+			.attr({
+				transform: seller.attr('transform'),
+				r: 0,
+				class: 'good trade'
+			})
+			.transition('grow')
+			.delay(125)
+			.duration(125)
+			.attr('r', 6)
+			.transition('z')
+			.ease('back')
+			.duration(600)
+			.attr({
+				transform: buyer.attr('transform')
+			})
+			.each('end', () => {
+				good.transition('q3')
 					.duration(160)
 					.ease('cubic')
 					.attr('r', 0)
@@ -104,10 +171,29 @@ const TradeCircle = React.createClass({
 });
 
 const AppComponent = React.createClass({
+	mixins: [PureRenderMixin],
+	getInitialState() {
+		return {
+			paused: true
+		};
+	},
+	pausePlay() {
+		let paused;
+		if (!(paused = !this.state.paused)) {
+			let t = d3Timer
+				.interval(elapsed => {
+					this.props.make_trade();
+					if (this.state.paused) t.stop();
+				}, 600);
+		}
+		this.setState({ paused: paused })
+	},
 	render() {
 		let trade_circle;
 		return (
 			<div className='flex-container-row main'>
+				<button onClick={this.pausePlay}>Pause Play</button>
+				<button onClick={this.props.reset}>Reset</button>
 				<svg width='500' height='500'>
 					<rect width='500' height='500' className='bg'/>
 					<g transform='translate(250,250)'>
@@ -118,6 +204,7 @@ const AppComponent = React.createClass({
 											className={`id-${d.id}`}
 											transform= {`translate(${R*Math.cos(i/k.length*Math.PI*2)}, ${R*Math.sin(i/k.length*Math.PI*2)})`}
 											key={d.id}>
+											<Wealth money={d.money }/>
 											{circle({
 												className: `trader`,
 												r: 15,
@@ -125,7 +212,6 @@ const AppComponent = React.createClass({
 												ref: d.id,
 												onClick: ()=> this.props.buy(d.id)
 											})}
-											<Balances balance={d.balance }/>
 									</g>
 									);
 						})}
@@ -137,11 +223,15 @@ const AppComponent = React.createClass({
 	}
 });
 
-
 const mapStateToProps = state => (state);
-// let i = 0;
-let λ = 3; //3 per second
+
 const mapActionsToProps = dispatch => ({
+	reset() {
+		dispatch({ type: 'RESET' });
+	},
+	make_trade() {
+		dispatch({ type: 'TRADE' });
+	},
 	buy(buyer_id) {
 		dispatch({ type: 'BUY', buyer_id });
 	}

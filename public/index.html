@@ -27,17 +27,17 @@
   	      values="0 0 0 0   0
   	              0 0 0 0   0 
   	              0 0 0 0   0 
-  	              0 0 0 .75 0"/>
+  	              0 0 0 .6 0"/>
   	    <feBlend in="SourceGraphic" in2="color-out" mode="normal" />
   	  </filter>
   	<filter id="f3" x="-35%" y="-35%" width="200%" height="200%">
   	  <feOffset result="offOut" in="SourceGraphic" dx="0" dy="0" />
-  	  <feGaussianBlur result="blurOut" in="offOut" stdDeviation="1.0" />
+  	  <feGaussianBlur result="blurOut" in="offOut" stdDeviation=".8" />
   	  <feColorMatrix in="blurOut" result="color-out" type="matrix"
   	    values="0 0 0 0   0
   	            0 0 0 0   0 
   	            0 0 0 0   0 
-  	            0 0 0 .8 0"/>
+  	            0 0 0 .6 0"/>
   	  <feBlend in="SourceGraphic" in2="color-out" mode="normal" />
   	</filter>
   	</defs>
