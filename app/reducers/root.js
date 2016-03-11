@@ -22,8 +22,11 @@ const initialState = {
 	gdp: 0,
 	time: 0,
 	β: 5,
-	z: 0
+	z: 0,
+	mu: 10
 };
+
+
 
 const TF = {
 	buy(buyer, traders, price_index, dt) { //returns a trade
@@ -64,16 +67,30 @@ const TF = {
 			y,
 			price
 		};
-	} //end calc_y
+	}, //end calc_y,
+	calc_denominator(traders, mu) {
+		return d3.sum(traders, d => Math.exp(-d.price * mu));
+	}
 };
+
 
 const reduceTick = (state, action) => {
 	const dt = action.dt / 1000,
-		time = state.time + dt;
+		time = state.time + dt,
+		mu = state.mu;
 
 	let traders = _.map(state.traders, trader => TF.calc_y(trader, time, dt));
+	const denom = TF.calc_denominator(traders, mu),
+		price_index = d3.mean(traders, trader => trader.price);
+		
+	let intervals = _.map(traders, trader => Math.exp(-trader.price * mu));
 
-	const price_index = d3.mean(traders, d => d.price);
+	intervals = _.reduce(intervals, (l, num) => {
+		l.push(
+			l[l.length - 1] + num / denom
+		);
+		return l;
+	}, [0]);
 
 	const trades = _(traders)
 		.map(buyer => TF.buy(buyer, traders, price_index, dt))
@@ -107,6 +124,7 @@ const reduceTick = (state, action) => {
 	if (state.z % 50 == 0) {
 		const gdp = d3.sum(history, d => d.spending / price_index) / 10;
 		console.log(gdp);
+		console.log(intervals);
 	}
 
 	return {...state, trades, traders, time, history, z: state.z + 1 };
