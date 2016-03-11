@@ -1,17 +1,6 @@
 import d3 from 'd3';
 import _ from 'lodash';
 
-// const initialTraders = _.map(_.range(15), i => {
-// 	return {
-// 		id: i,
-// 		money: 4,
-// 		β: 1,
-// 		price: 1,
-// 		last_sale: 0, //a time
-// 		last_price: 1
-// 	};
-// });
-
 const initialState = {
 	traders: initialTraders,
 	trades: [],

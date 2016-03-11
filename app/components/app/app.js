@@ -36,6 +36,10 @@ const Wealth = React.createClass({
 const Trades = React.createClass({
 	mixins: [PureRenderMixin],
 	selection: null,
+	xScale(val){
+		let {domain,range} = this.props;
+		return range[0] + (range[1] - range[0])*(val-domain[0])/(domain[1]-domain[0]);
+	},
 	update(trades) {
 		_.forEach(trades, trade => {
 			let buyer = d3.select(`g.id-${trade.buyer_id}`),
@@ -116,7 +120,7 @@ const Trades = React.createClass({
 		if (this.selection) this.update(nextProps.trades);
 	},
 	render() {
-		return <g ref='gTrades'/>
+		return <g ref='gTrades'></g>
 	}
 });
 
