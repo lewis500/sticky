@@ -179,7 +179,7 @@ const AppComponent = React.createClass({
 				</svg>
 				<br/>
 				<div>{this.props.β}</div>
-				<input type='range' min={0} max={2} step={.1} value={this.props.β} onChange={this.props.change_β}/>
+				<input type='range' min={0} max={10} step={.5} value={this.props.β} onChange={this.props.change_β}/>
 			</div>
 		);
 	}

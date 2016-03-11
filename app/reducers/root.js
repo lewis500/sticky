@@ -21,56 +21,57 @@ const initialState = {
 	history: [],
 	gdp: 0,
 	time: 0,
-	β: 1,
+	β: 5,
 	z: 0
 };
 
 const TF = {
 	buy(buyer, traders, price_index, dt) { //returns a trade
 		const { money, y, β, id } = buyer;
+		const real_balance = money / price_index;
 
-		const null_trade = {
+		//DOES DEMAND FOR BALANCES DEPEND ON INCOME OR ONLY CONSUMPTION?
+		// if (_.lt(real_balance, β * y)) return null_trade;
+
+		if (_.gte(real_balance / β * dt, Math.random())) {
+			const seller = _.sample(_.without(traders, buyer));
+			return {
+				buyer_id: id,
+				seller_id: seller.id,
+				price: seller.price
+			};
+		} else {
+			return {
 				buyer_id: id,
 				seller_id: -1,
 				price: -1
-			}, //filter this out later
-			real_balance = money / price_index;
+			};
+		}
 
-		//DOES DEMAND FOR BALANCES DEPEND ON INCOME OR ONLY CONSUMPTION?
-		// if (_.lt(real_balance, β * y)) {
-		// 	// console.log(real_balance, y);
-		// 	return null_trade;
-		// }
-
-		// if (_.lt(y * dt, Math.random())) return null_trade;
-
-		if (_.lt(real_balance / β * dt, Math.random())) return null_trade;
-
-		const seller = _.sample(_.without(traders, buyer));
-
-		return {
-			buyer_id: id,
-			seller_id: seller.id,
-			price: seller.price
-		};
 	}, //end buy
-	calc_y(trader, time) { //returns a trade
+	calc_y(trader, time, dt) { //returns a trade
 		//count over two seconds
-		const sales = _.filter(trader.sales, sale => _.gte(sale.time, time - 1)),
-			y = d3.sum(sales, sale => sale.real_price) / 1;
+		const HORIZON = 2;
+		const sales = _.filter(trader.sales, sale => _.gte(sale.time, time - HORIZON)),
+			y = d3.sum(sales, sale => sale.real_price) / HORIZON;
+		let price = trader.price,
+			employment = sales.length / HORIZON; //COULD ALSO USE REAL INCOME?
+		if (employment < .6) price = price * Math.exp(-dt * .02);
+		if (employment > 1.2) price = price * Math.exp(dt * .03);
 		return {
 			...trader,
 			sales,
-			y
+			y,
+			price
 		};
-	} //end calc_income
+	} //end calc_y
 };
 
 const reduceTick = (state, action) => {
 	const dt = action.dt / 1000,
 		time = state.time + dt;
 
-	let traders = _.map(state.traders, trader => TF.calc_y(trader, time));
+	let traders = _.map(state.traders, trader => TF.calc_y(trader, time, dt));
 
 	const price_index = d3.mean(traders, d => d.price);
 
@@ -98,13 +99,13 @@ const reduceTick = (state, action) => {
 	});
 
 	const history = _(state.history)
-		.filter(d => (d.time > (time - 5)))
+		.filter(d => (d.time > (time - 10)))
 		.push({ time, spending: d3.sum(trades, d => d.price) })
 		.value();
 
 
 	if (state.z % 50 == 0) {
-		const gdp = d3.sum(history, d => d.spending / price_index) / 5;
+		const gdp = d3.sum(history, d => d.spending / price_index) / 10;
 		console.log(gdp);
 	}
 
@@ -114,7 +115,6 @@ const reduceTick = (state, action) => {
 const rootReduce = (state = initialState, action) => {
 	switch (action.type) {
 		case 'CHANGE_BETA':
-			console.log(action.β);
 			return {
 				...state,
 				β: action.β,
