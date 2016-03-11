@@ -55,7 +55,7 @@ input[type=range] {
 }
 
 .trader {
-    fill: $md-light-blue-400;
+    fill: $md-light-blue-500;
     transition: transform .5s ease-in-out;
     filter: url(#f4);
     stroke: white;
@@ -86,11 +86,11 @@ body {
 .money.trade{
     // fill: $md-green-300;
     // stroke: black;
-    fill: $md-green-600;
+    fill: $md-green-500;
 }
 
 .good {
-    fill: $md-red-400;
+    fill: $md-amber-600;
 }
 
 

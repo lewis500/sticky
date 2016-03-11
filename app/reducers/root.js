@@ -1,5 +1,18 @@
-import d3 from 'd3';
 import _ from 'lodash';
+
+const initialTraders = _(10).range().map(d => {
+	return {
+		id: d,
+		money: 5,
+		price: 1,
+		β: 5, //fraction of spending in reserve
+		sales: [],
+		/*
+			sale = {time,real_price}
+		*/
+		y: 1
+	};
+}).value();
 
 const initialState = {
 	traders: initialTraders,
@@ -8,99 +21,103 @@ const initialState = {
 	history: [],
 	gdp: 0,
 	time: 0,
+	β: 1,
 	z: 0
 };
 
-const Trader = {
-	constructor(id) {
-		_.assign(this, {
-			id: id,
-			money: 4,
-			y: 1,
-			price: 1,
-			γ: 1 //fraction of income needed in reserve
-		});
-	},
-	purchase(dt, traders, price_index) {
-		let real_balance = this.money / price_index;
-		if (real_balance < this.γ * this.income) return null;
-		let planned_spending = real_balance / this.γ;
-		if (Math.random() > (dt * this.planned_spending)) return null;
-		let seller = _.sample(_.without(traders, this));
-		seller.sell(price_index);
-		this.money = this.money - seller.price;
-		let trade = { seller_id: seller.id, buyer_id: this.id };
-		return trade;
-	},
-	sell(dt){
+const TF = {
+	buy(buyer, traders, price_index, dt) { //returns a trade
+		const { money, y, β, id } = buyer;
 
-	},
-	calc_index(price_index){
+		const null_trade = {
+				buyer_id: id,
+				seller_id: -1,
+				price: -1
+			}, //filter this out later
+			real_balance = money / price_index;
 
-	}
+		//DOES DEMAND FOR BALANCES DEPEND ON INCOME OR ONLY CONSUMPTION?
+		// if (_.lt(real_balance, β * y)) {
+		// 	// console.log(real_balance, y);
+		// 	return null_trade;
+		// }
+
+		// if (_.lt(y * dt, Math.random())) return null_trade;
+
+		if (_.lt(real_balance / β * dt, Math.random())) return null_trade;
+
+		const seller = _.sample(_.without(traders, buyer));
+
+		return {
+			buyer_id: id,
+			seller_id: seller.id,
+			price: seller.price
+		};
+	}, //end buy
+	calc_y(trader, time) { //returns a trade
+		//count over two seconds
+		const sales = _.filter(trader.sales, sale => _.gte(sale.time, time - 1)),
+			y = d3.sum(sales, sale => sale.real_price) / 1;
+		return {
+			...trader,
+			sales,
+			y
+		};
+	} //end calc_income
 };
 
-const mu = 18;
-const cutoff0 = .8;
-const cutoff1 = 1.5;
-
 const reduceTick = (state, action) => {
-	let trades = [],
-		dt = action.dt / 1000,
-		time = state.time + dt,
-		traders = state.traders,
-		deflator = d3.sum(traders, d => Math.exp(-d.price * mu)),
-		z = 0,
-		intervals = _.map(traders, d => {
-			return z = z + Math.exp(-d.price * mu) / deflator;
-		});
+	const dt = action.dt / 1000,
+		time = state.time + dt;
 
-	traders = _.map(traders, trader => {
-		let gap = time - trader.last_sale;
-		if (gap < cutoff0) {
-			return {...trader, price: trader.last_price * Math.exp(.013 * (cutoff0 - gap)) };
-		} else if (gap > cutoff1) {
-			return {...trader, price: trader.last_price * Math.exp(-.012 * (gap - cutoff1)) };
-		} else return trader;
-	});
-	intervals.unshift(0);
-	_.forEach(traders, buyer => {
-		if (Math.random() > (dt / buyer.β)) return;
-		let draw = Math.random(),
-			seller = traders[
-				_.findLastIndex(intervals, d => d < draw)
-			],
-			price = seller.price;
-		if (seller === buyer) return;
-		traders[buyer.id] = {
+	let traders = _.map(state.traders, trader => TF.calc_y(trader, time));
+
+	const price_index = d3.mean(traders, d => d.price);
+
+	const trades = _(traders)
+		.map(buyer => TF.buy(buyer, traders, price_index, dt))
+		.filter(trade => trade.price != -1)
+		.value();
+
+	_.forEach(trades, trade => {
+		let { buyer_id, seller_id, price } = trade;
+		let buyer = traders[buyer_id],
+			seller = traders[seller_id];
+
+		traders[buyer_id] = {
 			...buyer,
 			money: buyer.money - price
 		};
-		traders[seller.id] = {
+
+		traders[seller_id] = {
 			...seller,
-			money: seller.money + price,
-			last_sale: time,
-			last_price: price,
+			sales: [...seller.sales, { time, real_price: price / price_index }],
+			money: seller.money + price
 		};
-		trades.push({ seller_id: seller.id, buyer_id: buyer.id, price });
+
 	});
-	let index = d3.mean(traders, d => d.price);
-	let history = _(state.history)
-		.filter(d => (d.time > (time - 8)))
-		.push({ time, spending: d3.sum(trades, d => d.price) }).value()
-	let gdp = d3.sum(history, d => d.spending / index) / 8;
-	if ((state.z % 40) == 0) {
+
+	const history = _(state.history)
+		.filter(d => (d.time > (time - 5)))
+		.push({ time, spending: d3.sum(trades, d => d.price) })
+		.value();
+
+
+	if (state.z % 50 == 0) {
+		const gdp = d3.sum(history, d => d.spending / price_index) / 5;
 		console.log(gdp);
 	}
-	return {...state, trades, traders, time, history, gdp, z: state.z + 1 };
+
+	return {...state, trades, traders, time, history, z: state.z + 1 };
 };
 
 const rootReduce = (state = initialState, action) => {
 	switch (action.type) {
 		case 'CHANGE_BETA':
-			console.log('asdf');
+			console.log(action.β);
 			return {
 				...state,
+				β: action.β,
 				traders: _.map(state.traders, trader => ({...trader, β: action.β })),
 				trades: []
 			};

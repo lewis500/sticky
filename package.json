@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "description": "Bus control form",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "flow": "flow; [[ $?=0||$?=2 ]]"
   },
   "repository": {
     "type": "git"
@@ -13,10 +14,12 @@
     "babel-core": "^6.0.20",
     "babel-eslint": "^4.1.3",
     "babel-loader": "^6.0.1",
+    "babel-plugin-transform-flow-strip-types": "^6.7.0",
     "babel-preset-es2015": "^6.0.15",
     "babel-preset-react": "^6.0.15",
     "babel-preset-stage-1": "^6.3.0",
     "css-loader": "^0.21.0",
+    "flow-bin": "^0.22.1",
     "node-sass": "^3.4.2",
     "react-hot-loader": "^1.3.0",
     "sass-loader": "^3.1.2",

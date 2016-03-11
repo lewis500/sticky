@@ -1,18 +1,2 @@
 TO DO
-+ start in equilibrium
-+ plot nominal interest rate
-+ show values next to sliders
-+ adapt axes
-+ add a brush
-+ plot the equilibrium real interest rate and ybar
-+ have bounds appear on the sliders once you mouse over, use transitions.
-+ format ticks
-
-LATER
-+ update package.json
-
-
-+ add a money exchange, too
-+ switch the money and item trade
-+ reset button
-+ 
++ start with aggregate price changes for everyone
