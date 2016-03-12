@@ -74,7 +74,7 @@ const Trades = React.createClass({
 				.duration(100)
 				.attr('r', 6)
 				.transition('z')
-				.ease('sin')
+				.ease('cubic')
 				.duration(400)
 				.attr({
 					transform: seller.attr('transform')
@@ -98,7 +98,7 @@ const Trades = React.createClass({
 				.duration(100)
 				.attr('r', 6)
 				.transition('z')
-				.ease('sin')
+				.ease('cubic')
 				.duration(400)
 				.attr({
 					transform: buyer.attr('transform')
@@ -155,8 +155,6 @@ const AppComponent = React.createClass({
 				<svg width='500' height='500'>
 					<rect width='500' height='500' className='bg'/>
 					<g transform='translate(250,250)'>
-						<Trades trades={this.props.trades} />
-					
 						{_.map(this.props.traders, (d,i,k)=>{
 									let R = 140;
 									return (
@@ -171,10 +169,12 @@ const AppComponent = React.createClass({
 												key: d.id,
 												ref: d.id,
 											})}
-											<text className='price label'>{d3.format('.2r')(d.price)}</text>
+											{//<text className='price label'>{d3.format('.2r')(d.price)}</text>
+											}
 									</g>
 									);
 						})}
+						<Trades trades={this.props.trades} />
 					</g>
 				</svg>
 				<br/>
