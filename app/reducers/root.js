@@ -3,9 +3,9 @@ import _ from 'lodash';
 const initialagents = _(10).range().map(d => {
 	return {
 		id: d,
-		money: 20,
+		money: 5,
 		price: 1,
-		β: 20, //fraction of spending in reserve
+		β: 5, //fraction of spending in reserve
 		sales: [],
 		y: 1
 	};
@@ -18,7 +18,7 @@ const initialState = {
 	history: [],
 	gdp: 0,
 	time: 0,
-	β: 20,
+	β: 5,
 	price_index: 1,
 	ϕ: .03,
 	z: 0,

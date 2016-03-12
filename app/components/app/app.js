@@ -164,7 +164,7 @@ const AppComponent = React.createClass({
 											transform= {`translate(${R*Math.cos(d.id/k.length*Math.PI*2)}, ${R*Math.sin(d.id/k.length*Math.PI*2)})`}
 											key={d.id}>
 											{
-												//<Wealth money={d.money }/>
+												<Wealth money={d.money }/>
 											}
 											{circle({
 												className: `agent`,
@@ -176,13 +176,13 @@ const AppComponent = React.createClass({
 									</g>
 									);
 						})}
-						<ProductionPlot history={this.props.history} />
 						<Trades trades={this.props.trades} />
 					</g>
 				</svg>
 				<br/>
 				<div>{this.props.β}</div>
 				<div>{this.props.price_index}</div>
+				<ProductionPlot history={this.props.history} />
 				<input type='range' min={0} max={10} step={.5} value={this.props.β} onChange={this.props.change_β}/>
 			</div>
 		);
