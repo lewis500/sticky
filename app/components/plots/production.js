@@ -13,16 +13,11 @@ const m = {
 	right: 15
 };
 
-const pathPairs = [
-	['y', col.pink['500'], 'production'],
-	['price_index', col['light-blue']['500'], 'p'],
-];
-
 const ProductionPlot = React.createClass({
 	mixins: [PureRenderMixin],
 	getInitialState() {
 		return {
-			xDomain: [0, 10],
+			xDomain: [0, 100],
 			yDomain: [0, 30],
 			width: 500,
 			height: 350
@@ -47,34 +42,6 @@ const ProductionPlot = React.createClass({
 		}
 		return "M" + points.join("L");
 	},
-	// _makeLegend() {
-	// 	return _.map(pathPairs, (e, i) => {
-	// 		return (
-	// 			<g 
-	// 				key={e[0]}
-	// 				transform={`translate(0,${i*15})`}>
-	// 				<rect fill={e[1]}/>
-	// 				<text>{e[0]}</text>
-	// 			</g>
-	// 		);
-	// 	});
-	// },
-	componentWillUpdate(nextProps) {
-		let variables = _.map(pathPairs, p => p[0]),
-			data = nextProps.history,
-			min, val, max;
-		min = val = max = data[0][variables[0]];
-		_.forEach(data, (d) => {
-			_.forEach(variables, (v) => {
-				val = d[v];
-				if (min > val) min = val;
-				if (max < val) max = val;
-			});
-		});
-		if (min != this.state.yDomain[0] && max != this.state.yDomain[1]) {
-			this.setState({ yDomain: [min, max], xDomain: [1, data[data.length - 1].time] });
-		}
-	},
 	render() {
 		let { width, height, yDomain, xDomain } = this.state;
 		let { yScale, xScale } = this;
@@ -86,9 +53,8 @@ const ProductionPlot = React.createClass({
 					clipPath="url(#myClip)">
 					<path 
 						className='path'	
-						key={e[0]} 
-						d={this._path(this.props.history,'time',e[0])} 
-						stroke={e[1]}/>
+						d={this._path(this.props.history,'time','Y')} 
+						/>
 				</g>
 			);
 		}
@@ -138,9 +104,6 @@ const ProductionPlot = React.createClass({
 						<g 
 							className='legend' 
 							transform={`translate(${width - 50},15)`}>
-							{
-								//this._makeLegend()
-							}
 						</g>
 					</g>
 					{paths}
@@ -150,4 +113,4 @@ const ProductionPlot = React.createClass({
 	}
 });
 
-export default IslmChart;
+export default ProductionPlot;

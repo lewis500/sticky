@@ -7,6 +7,7 @@ import './style-app.scss';
 import d3Ease from 'd3-ease';
 import d3Timer from 'd3-timer';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
+import ProductionPlot from '../plots/production';
 const { circle } = React.DOM;
 
 const arc = d3.svg.arc()
@@ -156,30 +157,32 @@ const AppComponent = React.createClass({
 					<rect width='500' height='500' className='bg'/>
 					<g transform='translate(250,250)'>
 						{_.map(this.props.agents, (d,i,k)=>{
-									let R = 140;
+									let R = 180;
 									return (
 										<g 
 											className={`id-${d.id}`}
 											transform= {`translate(${R*Math.cos(d.id/k.length*Math.PI*2)}, ${R*Math.sin(d.id/k.length*Math.PI*2)})`}
 											key={d.id}>
-											<Wealth money={d.money }/>
+											{
+												//<Wealth money={d.money }/>
+											}
 											{circle({
 												className: `agent`,
-												r: 13,
+												r: 10,
 												key: d.id,
 												ref: d.id,
 											})}
-											{
-											<text className='price label'>{d3.format('.2r')(d.price)}</text>
-											}
+
 									</g>
 									);
 						})}
+						<ProductionPlot history={this.props.history} />
 						<Trades trades={this.props.trades} />
 					</g>
 				</svg>
 				<br/>
 				<div>{this.props.β}</div>
+				<div>{this.props.price_index}</div>
 				<input type='range' min={0} max={10} step={.5} value={this.props.β} onChange={this.props.change_β}/>
 			</div>
 		);

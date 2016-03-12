@@ -1,11 +1,11 @@
 import _ from 'lodash';
 
-const initialagents = _(20).range().map(d => {
+const initialagents = _(10).range().map(d => {
 	return {
 		id: d,
-		money: 5,
+		money: 20,
 		price: 1,
-		β: 5, //fraction of spending in reserve
+		β: 20, //fraction of spending in reserve
 		sales: [],
 		y: 1
 	};
@@ -18,8 +18,9 @@ const initialState = {
 	history: [],
 	gdp: 0,
 	time: 0,
-	β: 5,
-	ϕ: .05,
+	β: 20,
+	price_index: 1,
+	ϕ: .03,
 	z: 0,
 };
 
@@ -86,10 +87,10 @@ const reduceTick = (state, action) => {
 
 	});
 
-	const HORIZON = 2;
-	const production = trades.length,
+	const HORIZON_LONG = 5,
+		production = trades.length,
 		history = _(state.history)
-		.filter(d => (d.time > (time - HORIZON)))
+		.filter(d => _.gte(d.time, time - HORIZON_LONG))
 		.push({
 			time,
 			production,
@@ -98,14 +99,16 @@ const reduceTick = (state, action) => {
 		})
 		.value();
 
-	const Y = d3.sum(state.history, d => d.production) / HORIZON,
+	const HORIZON_SHORT = 2, //used to calculate moving average
+		history_short = history.filter(d => _.gte(d.time, time - HORIZON_SHORT)),
+		Y = d3.sum(history_short, d => d.production) / HORIZON_SHORT,
 		Ȳ = agents.length,
 		output_gap = Math.log(Y / Ȳ),
 		price_cofactor = Math.exp(ϕ * output_gap * dt);
 
 	_.last(history).Y = Y;
 
-	if (time > HORIZON) {
+	if (time > HORIZON_SHORT) {
 		agents = _.map(agents, agent => {
 			return {
 				...agent,
@@ -116,10 +119,10 @@ const reduceTick = (state, action) => {
 
 
 	if (state.z % 100 == 0) {
-		console.log(Y,price_cofactor);
+		console.log(Y, price_cofactor);
 	}
 
-	return {...state, trades, agents, time, history, z: state.z + 1 };
+	return {...state, trades, agents, time, price_index, history, z: state.z + 1 };
 };
 
 const rootReduce = (state = initialState, action) => {
