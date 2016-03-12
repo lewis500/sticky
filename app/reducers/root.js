@@ -1,6 +1,6 @@
 import _ from 'lodash';
 
-const initialTraders = _(10).range().map(d => {
+const initialagents = _(20).range().map(d => {
 	return {
 		id: d,
 		money: 5,
@@ -12,31 +12,28 @@ const initialTraders = _(10).range().map(d => {
 }).value();
 
 const initialState = {
-	traders: initialTraders,
+	agents: initialagents,
 	trades: [],
 	elapsed: 0,
 	history: [],
 	gdp: 0,
 	time: 0,
 	β: 5,
+	ϕ: .01,
 	z: 0,
-	mu: 20
 };
 
 const TF = {
-	choose_seller(buyer_id, intervals) {
-		let draw = Math.random(),
-			seller_id = _.findLastIndex(intervals, d => d < draw);
-		if (buyer_id == seller_id) return this.choose_seller(buyer_id, intervals);
-		else return seller_id;
+	choose_seller(buyer, agents) {
+		const seller = _.sample(_.without(agents, buyer));
+		return seller;
 	},
-	buy(buyer, intervals, traders, price_index, dt) { //returns a trade
+	buy(buyer, agents, price_index, dt) { //returns a trade
 		const { money, y, β, id } = buyer;
 		const real_balance = money / price_index;
 
 		if (_.gte(real_balance / β * dt, Math.random())) {
-			// const seller = _.sample(_.without(traders, buyer));
-			const seller = traders[this.choose_seller(id, intervals)];
+			const seller = this.choose_seller(buyer, agents);
 			return {
 				buyer_id: id,
 				seller_id: seller.id,
@@ -51,58 +48,47 @@ const TF = {
 		}
 
 	}, //end buy
-	calc_y(trader, time, dt) { //returns a trade
+	calc_y(agent, time, dt) { //returns a trade
 		//count over two seconds
 		const HORIZON = 2;
-		if (time < HORIZON) return trader;
-		const sales = _.filter(trader.sales, sale => _.gt(sale.time, time - HORIZON)),
-			y = d3.sum(sales, sale => sale.real_price) / HORIZON;
-		let price = trader.price;
-		let employment = sales.length / HORIZON; //COULD ALSO USE REAL INCOME?
-		if (employment < .3) price = price * Math.exp(-dt * .04);
-		if (employment > 1.4) price = price * Math.exp(dt * .025);
+		if (time < HORIZON) return agent;
+		const sales = _.filter(agent.sales, sale => _.gte(sale.time, time - HORIZON)),
+			y = sales.length;
+		// y = d3.sum(sales, sale => sale.real_price) / HORIZON;
 		return {
-			...trader,
+			...agent,
 			sales,
-			y,
-			price
+			y
 		};
 	}, //end calc_y,
 };
 
 const reduceTick = (state, action) => {
 	const dt = action.dt / 1000,
-		time = state.time + dt,
-		mu = state.mu;
+		time = state.time + dt;
 
-	let traders = _.map(state.traders, trader => TF.calc_y(trader, time, dt));
-	const numerators = _.map(traders, trader => Math.exp(-trader.price * mu)),
-		denominator = _.sum(numerators),
-		intervals = _.reduce(numerators, (l, num) => {
-			return [...l, l[l.length - 1] + num / denominator];
-		}, [0]),
-		price_index = d3.sum(numerators, (d, i) => d / denominator * traders[i].price),
-		mean_price = d3.mean(traders, trader => trader.price);
+	let agents = _.map(state.agents, agent => TF.calc_y(agent, time, dt)),
+		spending = 0;
 
-	const trades = _(traders)
-		.map(buyer => TF.buy(buyer, intervals, traders, price_index, dt))
+	const price_index = d3.mean(agents, agent => agent.price),
+		trades = _(agents)
+		.map(buyer => TF.buy(buyer, agents, price_index, dt))
 		.filter(trade => trade.seller_id !== -1)
 		.value();
 
-	let spending = 0;
-
 	_.forEach(trades, trade => {
 		const { buyer_id, seller_id } = trade;
-		const buyer = traders[buyer_id],
-			seller = traders[seller_id],
+
+		const buyer = agents[buyer_id],
+			seller = agents[seller_id],
 			price = seller.price;
 
-		traders[buyer_id] = {
+		agents[buyer_id] = {
 			...buyer,
 			money: buyer.money - price
 		};
 
-		traders[seller_id] = {
+		agents[seller_id] = {
 			...seller,
 			sales: [...seller.sales, { time, real_price: price / price_index }],
 			money: seller.money + price
@@ -114,20 +100,37 @@ const reduceTick = (state, action) => {
 
 	const HORIZON = 3;
 
-	const history = _(state.history)
+	const production = trades.length,
+		history = _(state.history)
 		.filter(d => (d.time > (time - HORIZON)))
-		.push({ time, production: trades.length, real_spending: spending / price_index, price_index, mean_price })
+		.push({
+			time,
+			production,
+			spending,
+			price_index
+		})
 		.value();
 
-	if (state.z % 200 == 0) {
-		let emp = d3.sum(history, d => d.production) / HORIZON,
-			pi = d3.mean(history, d => d.price_index),
-			mp = d3.mean(history, d => d.mean_price);
+	const Y = d3.sum(history, d => d.production) / HORIZON,
+		Ȳ = agents.length,
+		output_gap = (Y - Ȳ),
+		ϕ = state.ϕ,
+		price_cofactor = Math.exp(ϕ * output_gap * dt);
 
-		console.log(emp, pi, mp);
+	agents = _.map(agents, agent => {
+		return {
+			...agent,
+			price: agent.price * price_cofactor
+		};
+	});
+
+
+	if (state.z % 100 == 0) {
+		// pi = d3.mean(history, d => d.price_index);
+		console.log(Y);
 	}
 
-	return {...state, trades, traders, time, history, z: state.z + 1 };
+	return {...state, trades, agents, time, history, z: state.z + 1 };
 };
 
 const rootReduce = (state = initialState, action) => {
@@ -136,7 +139,7 @@ const rootReduce = (state = initialState, action) => {
 			return {
 				...state,
 				β: action.β,
-				traders: _.map(state.traders, trader => ({...trader, β: action.β })),
+				agents: _.map(state.agents, agent => ({...agent, β: action.β })),
 				trades: []
 			};
 		case 'RESET':

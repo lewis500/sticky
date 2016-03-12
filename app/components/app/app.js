@@ -45,7 +45,7 @@ const Trades = React.createClass({
 			let buyer = d3.select(`g.id-${trade.buyer_id}`),
 				seller = d3.select(`g.id-${trade.seller_id}`);
 
-			buyer.select('circle.trader')
+			buyer.select('circle.agent')
 				.transition('asdf')
 				.ease('cubic')
 				.attr('transform', 'scale(1.25)')
@@ -54,7 +54,7 @@ const Trades = React.createClass({
 				.duration(800)
 				.attr('transform', 'scale(1)');
 
-			seller.select('circle.trader')
+			seller.select('circle.agent')
 				.transition('asdf')
 				.ease('cubic')
 				.attr('transform', 'scale(1.25)')
@@ -155,7 +155,7 @@ const AppComponent = React.createClass({
 				<svg width='500' height='500'>
 					<rect width='500' height='500' className='bg'/>
 					<g transform='translate(250,250)'>
-						{_.map(this.props.traders, (d,i,k)=>{
+						{_.map(this.props.agents, (d,i,k)=>{
 									let R = 140;
 									return (
 										<g 
@@ -164,12 +164,13 @@ const AppComponent = React.createClass({
 											key={d.id}>
 											<Wealth money={d.money }/>
 											{circle({
-												className: `trader`,
+												className: `agent`,
 												r: 13,
 												key: d.id,
 												ref: d.id,
 											})}
-											{//<text className='price label'>{d3.format('.2r')(d.price)}</text>
+											{
+											<text className='price label'>{d3.format('.2r')(d.price)}</text>
 											}
 									</g>
 									);
