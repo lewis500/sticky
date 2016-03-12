@@ -14,18 +14,16 @@ const m = {
 };
 
 const pathPairs = [
-	['π', col.pink['500'], '\\pi'],
-	['r', col['light-blue']['500'], 'r'],
-	['i', col.teal['500'], 'i'],
-	['x', col.purple['500'], 'x']
+	['y', col.pink['500'], 'production'],
+	['price_index', col['light-blue']['500'], 'p'],
 ];
 
-const IslmChart = React.createClass({
+const ProductionPlot = React.createClass({
 	mixins: [PureRenderMixin],
 	getInitialState() {
 		return {
-			xDomain: [1, 100],
-			yDomain: [-.5, .3],
+			xDomain: [0, 10],
+			yDomain: [0, 30],
 			width: 500,
 			height: 350
 		};
@@ -49,18 +47,18 @@ const IslmChart = React.createClass({
 		}
 		return "M" + points.join("L");
 	},
-	_makeLegend() {
-		return _.map(pathPairs, (e, i) => {
-			return (
-				<g 
-					key={e[0]}
-					transform={`translate(0,${i*15})`}>
-					<rect fill={e[1]}/>
-					<text>{e[0]}</text>
-				</g>
-			);
-		});
-	},
+	// _makeLegend() {
+	// 	return _.map(pathPairs, (e, i) => {
+	// 		return (
+	// 			<g 
+	// 				key={e[0]}
+	// 				transform={`translate(0,${i*15})`}>
+	// 				<rect fill={e[1]}/>
+	// 				<text>{e[0]}</text>
+	// 			</g>
+	// 		);
+	// 	});
+	// },
 	componentWillUpdate(nextProps) {
 		let variables = _.map(pathPairs, p => p[0]),
 			data = nextProps.history,
@@ -86,17 +84,11 @@ const IslmChart = React.createClass({
 				<g 
 					transform={`translate(${m.left},${m.top})`} 
 					clipPath="url(#myClip)">
-				{
-						_.map(pathPairs, (e)=>{
-						return (
-							<path 
-								className='path'	
-								key={e[0]} 
-								d={this._path(this.props.history,'time',e[0])} 
-								stroke={e[1]}/>
-						);
-					})
-				}
+					<path 
+						className='path'	
+						key={e[0]} 
+						d={this._path(this.props.history,'time',e[0])} 
+						stroke={e[1]}/>
 				</g>
 			);
 		}
@@ -146,7 +138,9 @@ const IslmChart = React.createClass({
 						<g 
 							className='legend' 
 							transform={`translate(${width - 50},15)`}>
-							{this._makeLegend()}
+							{
+								//this._makeLegend()
+							}
 						</g>
 					</g>
 					{paths}

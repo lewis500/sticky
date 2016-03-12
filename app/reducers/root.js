@@ -19,7 +19,7 @@ const initialState = {
 	gdp: 0,
 	time: 0,
 	β: 5,
-	ϕ: .01,
+	ϕ: .05,
 	z: 0,
 };
 
@@ -48,26 +48,14 @@ const TF = {
 		}
 
 	}, //end buy
-	calc_y(agent, time, dt) { //returns a trade
-		//count over two seconds
-		const HORIZON = 2;
-		if (time < HORIZON) return agent;
-		const sales = _.filter(agent.sales, sale => _.gte(sale.time, time - HORIZON)),
-			y = sales.length;
-		// y = d3.sum(sales, sale => sale.real_price) / HORIZON;
-		return {
-			...agent,
-			sales,
-			y
-		};
-	}, //end calc_y,
 };
 
 const reduceTick = (state, action) => {
 	const dt = action.dt / 1000,
-		time = state.time + dt;
+		time = state.time + dt,
+		ϕ = state.ϕ;
 
-	let agents = _.map(state.agents, agent => TF.calc_y(agent, time, dt)),
+	let agents = state.agents,
 		spending = 0;
 
 	const price_index = d3.mean(agents, agent => agent.price),
@@ -98,8 +86,7 @@ const reduceTick = (state, action) => {
 
 	});
 
-	const HORIZON = 3;
-
+	const HORIZON = 2;
 	const production = trades.length,
 		history = _(state.history)
 		.filter(d => (d.time > (time - HORIZON)))
@@ -111,23 +98,25 @@ const reduceTick = (state, action) => {
 		})
 		.value();
 
-	const Y = d3.sum(history, d => d.production) / HORIZON,
+	const Y = d3.sum(state.history, d => d.production) / HORIZON,
 		Ȳ = agents.length,
-		output_gap = (Y - Ȳ),
-		ϕ = state.ϕ,
+		output_gap = Math.log(Y / Ȳ),
 		price_cofactor = Math.exp(ϕ * output_gap * dt);
 
-	agents = _.map(agents, agent => {
-		return {
-			...agent,
-			price: agent.price * price_cofactor
-		};
-	});
+	_.last(history).Y = Y;
+
+	if (time > HORIZON) {
+		agents = _.map(agents, agent => {
+			return {
+				...agent,
+				price: agent.price * price_cofactor
+			};
+		});
+	}
 
 
 	if (state.z % 100 == 0) {
-		// pi = d3.mean(history, d => d.price_index);
-		console.log(Y);
+		console.log(Y,price_cofactor);
 	}
 
 	return {...state, trades, agents, time, history, z: state.z + 1 };
