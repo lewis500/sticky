@@ -13,6 +13,8 @@ const m = {
 	right: 5
 };
 
+
+
 const ProductionPlot = React.createClass({
 	mixins: [PureRenderMixin],
 	getInitialState() {
