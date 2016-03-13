@@ -1,25 +1,24 @@
 import React from 'react';
-import {findDOMNode} from 'react-dom';
+import { findDOMNode } from 'react-dom';
 import d3 from 'd3';
 import './style-market.scss';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 const { circle } = React.DOM;
 
 const arc = d3.svg.arc()
-	.innerRadius(18)
-	.outerRadius(22)
-	.startAngle(0)
-	.endAngle(d => d / 20 * Math.PI * 2);
+	.innerRadius(18).outerRadius(22)
+	.startAngle(0).endAngle(d => d / 20 * Math.PI * 2);
 
 const Wealth = React.createClass({
+	arc,
 	mixins: [PureRenderMixin],
 	selection: null,
 	update(oldMoney, newMoney) {
-		this.selection.attr('d', arc(newMoney));
+		this.selection.attr('d', this.arc(newMoney));
 	},
 	componentDidMount() {
 		this.selection = d3.select(findDOMNode(this));
-		this.selection.attr('d', arc(this.props.money));
+		this.selection.attr('d', this.arc(this.props.money));
 	},
 	componentWillReceiveProps(nextProps) {
 		if (this.selection) this.update(this.props.money, nextProps.money)

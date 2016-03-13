@@ -7,142 +7,20 @@ import ProductionPlot from '../plots/production';
 import Market from '../market/market';
 const { circle } = React.DOM;
 
-const arc = d3.svg.arc()
-	.innerRadius(18)
-	.outerRadius(22)
-	.startAngle(0)
-	.endAngle(d => d / 20 * Math.PI * 2);
-
-const Wealth = React.createClass({
-	mixins: [PureRenderMixin],
-	selection: null,
-	update(oldMoney, newMoney) {
-		this.selection.attr('d', arc(newMoney));
-	},
-	componentDidMount() {
-		this.selection = d3.select(this.refs.path);
-		this.selection.attr('d', arc(this.props.money));
-	},
-	componentWillReceiveProps(nextProps) {
-		if (this.selection) this.update(this.props.money, nextProps.money)
-	},
-	render() {
-		return <path ref='path' className='money arc'/>
-	}
-});
-
-const Trades = React.createClass({
-	mixins: [PureRenderMixin],
-	selection: null,
-	xScale(val) {
-		let { domain, range } = this.props;
-		return range[0] + (range[1] - range[0]) * (val - domain[0]) / (domain[1] - domain[0]);
-	},
-	update(trades) {
-		_.forEach(trades, trade => {
-			let buyer = d3.select(`g.id-${trade.buyer_id}`),
-				seller = d3.select(`g.id-${trade.seller_id}`);
-
-			buyer.select('circle.agent')
-				.transition('asdf')
-				.ease('cubic')
-				.attr('transform', 'scale(1.25)')
-				.transition()
-				.ease('bounce')
-				.duration(800)
-				.attr('transform', 'scale(1)');
-
-			seller.select('circle.agent')
-				.transition('asdf')
-				.ease('cubic')
-				.attr('transform', 'scale(1.25)')
-				.transition()
-				.ease('bounce')
-				.duration(800)
-				.attr('transform', 'scale(1)');
-
-			let money = this.selection
-				.append('circle')
-				.attr({
-					transform: buyer.attr('transform'),
-					r: 0,
-					class: 'money trade'
-				})
-				.transition('grow')
-				.duration(100)
-				.attr('r', 6)
-				.transition('z')
-				.ease('cubic')
-				.duration(400)
-				.attr({
-					transform: seller.attr('transform')
-				})
-				.each('end', () => {
-					money.transition('q2')
-						.duration(50)
-						.ease('cubic')
-						.attr('r', 0)
-						.remove();
-				});
-
-			let good = this.selection
-				.append('circle')
-				.attr({
-					transform: seller.attr('transform'),
-					r: 0,
-					class: 'good trade'
-				})
-				.transition('grow')
-				.duration(100)
-				.attr('r', 6)
-				.transition('z')
-				.ease('cubic')
-				.duration(400)
-				.attr({
-					transform: buyer.attr('transform')
-				})
-				.each('end', () => {
-					good.transition('q3')
-						.duration(130)
-						.ease('cubic')
-						.attr('r', 0)
-						.remove();
-				});
-		});
-
-	},
-	componentDidMount() {
-		this.selection = d3.select(this.refs.gTrades);
-	},
-	componentWillReceiveProps(nextProps) {
-		if (this.selection) this.update(nextProps.trades);
-	},
-	render() {
-		return <g ref='gTrades'></g>
-	}
-});
-
 const AppComponent = React.createClass({
-	mixins: [PureRenderMixin],
-	getInitialState() {
-		return {
-			paused: true
-		};
-	},
+	paused: true,
 	pausePlay() {
-		let paused;
-		if (!(paused = !this.state.paused)) {
+		if (!(this.paused = !this.paused)) {
 			let last = 0,
-				dt = 0;
-			let t = d3Timer
+				dt = 0,
+				timer = d3Timer
 				.timer(elapsed => {
 					dt = elapsed - last;
 					last = elapsed;
-					if (this.state.paused) t.stop();
+					if (this.paused) timer.stop();
 					this.props.tick(dt);
 				});
 		}
-		this.setState({ paused: paused })
 	},
 	render() {
 		let trade_circle;
