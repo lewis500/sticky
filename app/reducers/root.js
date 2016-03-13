@@ -6,7 +6,8 @@ const initialagents = _(10).range().map(d => {
 		money: 5,
 		price: 1,
 		β: 5, //fraction of spending in reserve
-		sales: [],
+		history: [],
+		real_balance: 5,
 		y: 1
 	};
 }).value();
@@ -29,9 +30,8 @@ const TF = {
 		const seller = _.sample(_.without(agents, buyer));
 		return seller;
 	},
-	buy(buyer, agents, price_index, dt) { //returns a trade
-		const { money, y, β, id } = buyer;
-		const real_balance = money / price_index;
+	buy(buyer, agents, dt) { //returns a trade
+		let { β, id, real_balance } = buyer;
 
 		if (_.gte(real_balance / β * dt, Math.random())) {
 			const seller = this.choose_seller(buyer, agents);
@@ -56,12 +56,37 @@ const reduceTick = (state, action) => {
 		time = state.time + dt,
 		ϕ = state.ϕ;
 
-	let agents = state.agents,
-		spending = 0;
+	let spending = 0;
+	let agents = state.agents;
 
-	const price_index = d3.mean(agents, agent => agent.price),
-		trades = _(agents)
-		.map(buyer => TF.buy(buyer, agents, price_index, dt))
+	const price_index = d3.mean(agents, agent => agent.price);
+
+	agents = _.map(agents, agent => {
+		let real_balance_current = agent.money / price_index,
+			real_balance = real_balance_current;
+
+		let history = _(agent.history)
+			.filter(d => _.gte(d.time, time - 2))
+			.push({ time, dt, real_balance: real_balance_current })
+			.value();
+
+		if (agent.history.length > 1) {
+			let duration = time - history[0].time;
+			real_balance = d3.sum(history, d => {
+				return d.real_balance * d.dt;
+			}) / duration;
+		}
+
+		return {
+			...agent,
+			real_balance,
+			history
+		};
+
+	});
+
+	const trades = _(agents)
+		.map(buyer => TF.buy(buyer, agents, dt))
 		.filter(trade => trade.seller_id !== -1)
 		.value();
 
@@ -79,7 +104,6 @@ const reduceTick = (state, action) => {
 
 		agents[seller_id] = {
 			...seller,
-			sales: [...seller.sales, { time, real_price: price / price_index }],
 			money: seller.money + price
 		};
 
@@ -101,6 +125,7 @@ const reduceTick = (state, action) => {
 
 	const HORIZON_SHORT = 2, //used to calculate moving average
 		history_short = history.filter(d => _.gte(d.time, time - HORIZON_SHORT)),
+		// Y = trades.length/dt,
 		Y = d3.sum(history_short, d => d.production) / HORIZON_SHORT,
 		Ȳ = agents.length,
 		output_gap = Math.log(Y / Ȳ),
@@ -116,7 +141,6 @@ const reduceTick = (state, action) => {
 			};
 		});
 	}
-
 
 	if (state.z % 100 == 0) {
 		console.log(Y, price_cofactor);
