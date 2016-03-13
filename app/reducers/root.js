@@ -1,6 +1,6 @@
 import _ from 'lodash';
 
-const initialagents = _(20).range().map(d => {
+const initialagents = _(10).range().map(d => {
 	return {
 		id: d,
 		money: 5,
@@ -115,15 +115,20 @@ const reduceTick = (state, action) => {
 		});
 	}
 
-	if (state.z % 100 == 0) {
-		console.log(Y, price_index);
-	}
+	// if (state.z % 100 == 0) {
+	// 	console.log(Y, price_index);
+	// }
 
 	return {...state, trades, agents, time, price_index, history, z: state.z + 1 };
 };
 
 const rootReduce = (state = initialState, action) => {
 	switch (action.type) {
+		case 'CHANGE_β':
+			return {
+				...state,
+				β: action.β
+			};
 		case 'RESET':
 			return initialState;
 		case 'TICK':

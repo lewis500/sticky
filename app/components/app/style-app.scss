@@ -1,60 +1,149 @@
 @import '~material-colors/dist/colors';
+@import '../../style/variables';
+@import url(https://fonts.googleapis.com/css?family=Roboto:400,300italic,500,400italic,100&subset=latin,greek,greek);
+body {
+    font-family: Roboto;
+    font-weight: 100;
+    font-size: 12px;
+    line-height: 1.45em;
+}
+
 .flex-container-column {
     display: flex;
     flex-direction: column;
     // flex-wrap: nowrap;
     justify-content: flex-start;
     // align-content: stretch;
-    align-items: center;
+    // align-items: flex-start;
 }
 
 .flex-container-row {
+    display: -ms-flexbox;
+    display: -webkit-flex;
     display: flex;
+    -webkit-flex-direction: row;
+    -ms-flex-direction: row;
     flex-direction: row;
-    // flex-wrap: nowrap;
-    // justify-content: space-around;
+    -webkit-flex-wrap: nowrap;
+    -ms-flex-wrap: nowrap;
+    flex-wrap: nowrap;
+    -webkit-justify-content: flex-start;
+    -ms-flex-pack: start;
+    justify-content: flex-start;
+    -webkit-align-content: flex-start;
+    -ms-flex-line-pack: start;
+    align-content: flex-start;
+    -webkit-align-items: flex-start;
+    -ms-flex-align: start;
+    align-items: flex-start;
+    }
+
+.ll-tabs {
+    width: 100%;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-flex-direction: row;
+    -ms-flex-direction: row;
+    flex-direction: row;
+    -webkit-flex-wrap: nowrap;
+    -ms-flex-wrap: nowrap;
+    flex-wrap: nowrap;
+    -webkit-justify-content: flex-start;
+    -ms-flex-pack: start;
+    justify-content: flex-start;
+    -webkit-align-content: stretch;
+    -ms-flex-line-pack: stretch;
+    align-content: stretch;
+    -webkit-align-items: flex-start;
+    -ms-flex-align: start;
     align-items: center;
 }
+
+.ll-tab {
+    display: flex;
+    -webkit-order: 0;
+    color: white;
+    -ms-flex-order: 0;
+    order: 0;
+    -webkit-flex: 1 1 auto;
+    -ms-flex: 1 1 auto;
+    display: flex;
+    flex: 1 1 auto;
+    padding: 22px;
+    -webkit-align-self: auto;
+    -ms-flex-item-align: auto;
+    align-self: auto;
+    text-align: center;
+    horizontal-align: center;
+    background-color: $md-light-blue-900;
+    // font-weight: 400;
+    font-size: 15px;
+}
+
+.ll-tabs {
+    text-align: center;
+}
+
+.ll-column-one{
+    color: white;
+    border-radius: 2px;
+    @include shadow-2dp();
+    background-color: $md-light-blue-800;
+
+}
+
+.ll-tab.active{
+    // background-color: $md-blue-800;
+    border-bottom: 1px solid $md-pink-500;
+}
+
+
+.ll-text{
+    padding: 20px;
+}
+
 
 .main {
     padding: 20px;
 }
 
-.is-slider .katex-display {
-    // margin: .1em;
-    margin: 0;
-}
-
-div.is-slider {
-    background-color: rgba($md-grey-100, .45);
-    box-shadow: .15px .4px 1.5px .5px rgba($md-grey-400, .8);
-    margin: 6px 2px;
-    padding: 2px 5px;
-    position: relative;
-    // padding: -5px;
-}
-
-input[type=range] {
-    margin: 8px 0px;
-}
-
-.is-slider .ticks {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    bottom: 0px;
-    // left: 0%;
-}
-
-.ticks .is-tick {
-    position: absolute;
-    height: 5px;
-    width: 1px;
-    bottom: 12px;
-    background-color: #ccc;
-}
-
 body {
     background-color: rgba($md-grey-300, 1);
+}
+
+div.my-slider {
+    margin: 20px 0px;
+}
+
+.rc-slider-track {
+    background-color: $md-light-blue-500;
+}
+
+.rc-slider-handle {
+    border: solid 2px $md-light-blue-500;
+}
+
+.buttons{
+    text-align: center;
+    horizontal-align: center;
+}
+
+button.btn {
+    margin: 10px;
+    flex: 1 1 auto;
+    border: 1px solid white;
+    padding: 10px;
+    background: none;
+    color: white;
+    text-align: center;
+    horizontal-align: center;
+}
+
+#note {
+    line-height: 14px;
+    font-size: 11px;
+    // font-weight: 400italic;
+    font-style: italic;
 }
 

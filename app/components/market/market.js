@@ -6,7 +6,7 @@ import PureRenderMixin from 'react-addons-pure-render-mixin';
 const { circle } = React.DOM;
 
 const arc = d3.svg.arc()
-	.innerRadius(18).outerRadius(22)
+	.innerRadius(15).outerRadius(22)
 	.startAngle(0).endAngle(d => d / 20 * Math.PI * 2);
 
 const Wealth = React.createClass({
@@ -121,11 +121,10 @@ const Trades = React.createClass({
 
 const Market = ({ agents, trades }) => {
 	return (
-		<svg width='500' height='500'>
-				<rect width='500' height='500' className='bg'/>
-				<g transform='translate(250,250)'>
+		<svg width='420' height='420'>
+				<g transform='translate(205,205)'>
 					{_.map(agents, (d,i,k)=>{
-								let R = 180;
+								let R = 190;
 								return (
 									<g 
 										className={`id-${d.id}`}

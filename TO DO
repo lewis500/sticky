@@ -1,6 +1,7 @@
 TO DO
 + make two plots
-+ flexbox row and column
 + have the ydomain respond to the money supply
-+ make a circlePlot component instead of putting it all in the app
-
++ put the β value on there
++ put the value over the slider 
++ make the plot shift with time
++ rc slider

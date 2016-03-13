@@ -1,20 +1,28 @@
 @import '~material-colors/dist/colors';
 .axis {
     fill: none;
-    stroke: #000;
+    // stroke: #000;
     shape-rendering: crispEdges;
 }
 
 .axis text {
-    fill: #000;
+    fill: $md-blue-grey-600;
+    // fill: white;
     stroke: none;
 }
 
 .axis line {
-    stroke: $md-grey-300;
-    stroke-dasharray: 1.5,1;
+    // stroke: $md-grey-100;
+    // stroke: white;
+    stroke: $md-blue-grey-300;
+    stroke-dasharray: 1.2,1.2;
 }
 
 .axis path {
-    stroke: #ccc;
+    // stroke: #ccc;
+    stroke: none;
+}
+
+.domain{
+	stroke: none;
 }

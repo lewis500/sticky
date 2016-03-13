@@ -7,20 +7,20 @@ import Axis from '../axis/axis';
 import col from '../../style/colors';
 
 const m = {
-	top: 20,
-	left: 45,
-	bottom: 30,
-	right: 15
+	top: 10,
+	left: 30,
+	bottom: 5,
+	right: 5
 };
 
 const ProductionPlot = React.createClass({
 	mixins: [PureRenderMixin],
 	getInitialState() {
 		return {
-			xDomain: [0, 100],
+			xDomain: [0, 10],
 			yDomain: [0, 15],
-			width: 500,
-			height: 350
+			width: 300,
+			height: 160
 		};
 	},
 	xScale(v) {
@@ -31,7 +31,7 @@ const ProductionPlot = React.createClass({
 		let { yDomain, height } = this.state;
 		return height * (yDomain[1] - v) / (yDomain[1] - yDomain[0]);
 	},
-	_path(data, xVar, yVar) {
+	pathMaker(data, xVar, yVar) {
 		var i = data.length,
 			points = new Array(i);
 		while (i--) {
@@ -41,6 +41,13 @@ const ProductionPlot = React.createClass({
 			];
 		}
 		return "M" + points.join("L");
+	},
+	componentWillReceiveProps(nextProps) {
+		let { history } = nextProps;
+		if (nextProps.time > 7.5) {
+			let xDomain = [history[0].time, history[history.length - 1].time + 2.5];
+			this.setState({ xDomain })
+		}
 	},
 	render() {
 		let { width, height, yDomain, xDomain } = this.state;
@@ -53,12 +60,8 @@ const ProductionPlot = React.createClass({
 					clipPath="url(#myClip)">
 					<path 
 						className='path'	
-						d={this._path(this.props.history,'time','Y')} 
+						d={this.pathMaker(this.props.history,'time','Y')} 
 						/>
-						<path 
-							className='path'	
-							d={this._path(this.props.history,'time','price_index')} 
-							/>
 				</g>
 			);
 		}
@@ -76,34 +79,19 @@ const ProductionPlot = React.createClass({
 							height={height +5} />
 					</clipPath>
 					<g transform={`translate(${m.left},${m.top})`}>
-
-						<rect 
-							className='bg' 
-							width={width} 
-							height={height}/>
-
 						<Axis 
 							classname='axis'
 							domain={yDomain}
 							range={[height,0]}
 							height={height}
+							tickArguments={[5]}
+							innerTickSize={this.state.width}
 							orientation='left'
-							tickFormat={d3.format("+0.2r")}
+							tickFormat={d3.format("d")}
 							innerTickSize={-width}
 						/>
-						<Axis 
-							className='axis'
-							innerTickSize={-height}
-							domain={xDomain}
-							range={[0,width]}
-							width={width}
-							height={height}
-							orientation='bottom'
-							label='time'
-						/>
-						<line {...{x1: 0, x2: width, y1: yScale(0), y2: yScale(0)}} 
-							className='zero'
-						/>
+
+
 						<g 
 							className='legend' 
 							transform={`translate(${width - 50},15)`}>
@@ -115,5 +103,16 @@ const ProductionPlot = React.createClass({
 		);
 	}
 });
+/*
+	<Axis 
+		className='axis'
+		domain={xDomain}
+		range={[0,width]}
+		width={width}
+		height={height}
+		orientation='bottom'
+		label='time'
+	/>
+	*/
 
 export default ProductionPlot;
