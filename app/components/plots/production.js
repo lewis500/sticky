@@ -18,7 +18,7 @@ const ProductionPlot = React.createClass({
 	getInitialState() {
 		return {
 			xDomain: [0, 100],
-			yDomain: [0, 30],
+			yDomain: [0, 15],
 			width: 500,
 			height: 350
 		};
@@ -55,6 +55,10 @@ const ProductionPlot = React.createClass({
 						className='path'	
 						d={this._path(this.props.history,'time','Y')} 
 						/>
+						<path 
+							className='path'	
+							d={this._path(this.props.history,'time','price_index')} 
+							/>
 				</g>
 			);
 		}
@@ -97,8 +101,7 @@ const ProductionPlot = React.createClass({
 							orientation='bottom'
 							label='time'
 						/>
-						<line 
-							{...{x1: 0, x2: width, y1: yScale(0), y2: yScale(0)}} 
+						<line {...{x1: 0, x2: width, y1: yScale(0), y2: yScale(0)}} 
 							className='zero'
 						/>
 						<g 

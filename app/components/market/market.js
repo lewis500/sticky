@@ -1,10 +1,8 @@
-import { connect } from 'react-redux';
 import React from 'react';
-import './style-app.scss';
-import d3Timer from 'd3-timer';
+import {findDOMNode} from 'react-dom';
+import d3 from 'd3';
+import './style-market.scss';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
-import ProductionPlot from '../plots/production';
-import Market from '../market/market';
 const { circle } = React.DOM;
 
 const arc = d3.svg.arc()
@@ -20,14 +18,14 @@ const Wealth = React.createClass({
 		this.selection.attr('d', arc(newMoney));
 	},
 	componentDidMount() {
-		this.selection = d3.select(this.refs.path);
+		this.selection = d3.select(findDOMNode(this));
 		this.selection.attr('d', arc(this.props.money));
 	},
 	componentWillReceiveProps(nextProps) {
 		if (this.selection) this.update(this.props.money, nextProps.money)
 	},
 	render() {
-		return <path ref='path' className='money arc'/>
+		return <path className='money arc'/>
 	}
 });
 
@@ -112,67 +110,44 @@ const Trades = React.createClass({
 
 	},
 	componentDidMount() {
-		this.selection = d3.select(this.refs.gTrades);
+		this.selection = d3.select(findDOMNode(this));
 	},
 	componentWillReceiveProps(nextProps) {
 		if (this.selection) this.update(nextProps.trades);
 	},
 	render() {
-		return <g ref='gTrades'></g>
+		return <g></g>
 	}
 });
 
-const AppComponent = React.createClass({
-	mixins: [PureRenderMixin],
-	getInitialState() {
-		return {
-			paused: true
-		};
-	},
-	pausePlay() {
-		let paused;
-		if (!(paused = !this.state.paused)) {
-			let last = 0,
-				dt = 0;
-			let t = d3Timer
-				.timer(elapsed => {
-					dt = elapsed - last;
-					last = elapsed;
-					if (this.state.paused) t.stop();
-					this.props.tick(dt);
-				});
-		}
-		this.setState({ paused: paused })
-	},
-	render() {
-		let trade_circle;
-		return (
-			<div className='flex-container-column main'>
-				<button onClick={this.pausePlay}>Pause Play</button>
-				<button onClick={this.props.reset}>Reset</button>
-				<Market agents={this.props.agents} trades={this.props.trades} />
-				<br/>
-				<div>{this.props.β}</div>
-				<div>{this.props.price_index}</div>
-				<ProductionPlot history={this.props.history} />
-				<input type='range' min={0} max={10} step={.5} value={this.props.β} onChange={this.props.change_β}/>
-			</div>
-		);
-	}
-});
+const Market = ({ agents, trades }) => {
+	return (
+		<svg width='500' height='500'>
+				<rect width='500' height='500' className='bg'/>
+				<g transform='translate(250,250)'>
+					{_.map(agents, (d,i,k)=>{
+								let R = 180;
+								return (
+									<g 
+										className={`id-${d.id}`}
+										transform= {`translate(${R*Math.cos(d.id/k.length*Math.PI*2)}, ${R*Math.sin(d.id/k.length*Math.PI*2)})`}
+										key={d.id}>
+										{
+											<Wealth money={d.money }/>
+										}
+										{circle({
+											className: `agent`,
+											r: 10,
+											key: d.id,
+										})}
 
-const mapStateToProps = state => (state);
+								</g>
+								);
+					})}
+					<Trades trades={trades} />
+				</g>
+		</svg>
+	);
+};
 
-const mapActionsToProps = dispatch => ({
-	change_β(e) {
-		dispatch({ type: 'CHANGE_BETA', β: +e.target.value });
-	},
-	reset() {
-		dispatch({ type: 'RESET' });
-	},
-	tick(dt) {
-		dispatch({ type: 'TICK', dt });
-	}
-});
-
-export default connect(mapStateToProps, mapActionsToProps)(AppComponent);
+export default Market;

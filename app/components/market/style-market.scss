@@ -1,0 +1,42 @@
+@import '~material-colors/dist/colors';
+
+.agent {
+    fill: $md-light-blue-500;
+    transition: transform .5s ease-in-out;
+    filter: url(#f4);
+    stroke: white;
+    stroke-width: 2px;
+}
+
+.bg{
+    fill: none;
+}
+
+
+.money,
+.good {
+    stroke: white;
+    stroke-width: 1.2px;
+    filter: url(#f3);
+    pointer-events: none;
+}
+
+.money {
+    fill: $md-green-500;
+}
+
+.money.trade{
+    fill: $md-green-500;
+}
+
+.good {
+    fill: $md-amber-600;
+}
+
+
+.price.label{
+    font-size: 10px;
+    text-anchor: middle;
+    alignment-baseline: central;
+    fill: white;
+}
