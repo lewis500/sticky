@@ -90,7 +90,6 @@ body {
     border-radius: 2px;
     @include shadow-2dp();
     background-color: $md-light-blue-800;
-
 }
 
 .ll-tab.active{
@@ -100,7 +99,7 @@ body {
 
 
 .ll-text{
-    padding: 20px;
+    padding: 12px 24px;
 }
 
 

@@ -32,7 +32,7 @@ const Text = React.createClass({
 					Change β and M with the sliders. If you raise β, people want to hold more money, and spending falls. If you raise M, dollars "split" into new dollars, and spending rises.
 				</p>
 				<p>
-					You can't control the price P. It changes based on how hard workers are working. If workers make more than one widget per second, P rises; if they make less, P falls. Because prices adjust, in the long run you can't control output unless you keep P rising.
+					The price level, P, depends on how hard workers are working. If workers make more than one widget per second, the economy is over capacity, and P rises; if they make less, P falls. Because prices adjust, in the long run you can't control output unless you keep P rising.
 				</p>
 			</div>
 		);
