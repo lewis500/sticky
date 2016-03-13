@@ -1,4 +1,6 @@
 import React from 'react';
+import PureRenderMixin from 'react-addons-pure-render-mixin';
+
 const styles = {
 	headline: {
 		fontSize: 24,
@@ -16,7 +18,7 @@ const Katex = (data) => {
 const explanation = (
 		<div className='ll-text' >
 		<p>
-			To the right, "workers" buy "widgets" from each other for {Katex('P')} dollars each. There are {Katex('M')} dollars in total. For safety, each worker wants to hold {Katex('\\beta')} dollars in the bank for each dollar he/she spends. So, in all, workers spend about {Katex('M/\\beta')} dollars/second. Since one dollar buys {Katex('1/P')} widgets, "output" per second is about {Katex('\\frac{M/\\beta}{P}')}. </p>
+			"Workers" buy "widgets" from each other for {Katex('P')} dollars each. There are {Katex('M')} dollars in total. For safety, each worker wants to hold {Katex('\\beta')} dollars in the bank for each dollar he/she spends. So, in all, workers spend about {Katex('M/\\beta')} dollars/second. Since one dollar buys {Katex('1/P')} widgets, "output" per second is about {Katex('\\frac{M/\\beta}{P}')}. </p>
 		<p>
 			Change {Katex('\\beta')} and {Katex('M')} with the sliders. If you raise {Katex('\\beta')}, people want to hold more money, and spending falls. If you raise M, dollars "split" into new dollars, and spending rises.
 		</p>
@@ -34,7 +36,7 @@ const explanation = (
 			Recessions happen when individuals, governments and/or firms decide to spend money less quickly. With lower spending, the only way the same amount of stuff gets sold is if prices fall. But prices &mdash; especially wages &mdash; fall slowly. So unless someone makes new money, or something (e.g., a bubble or new technology) makes people spend again, recessions last a long time. The opposite &mdash; a boom with rising prices &mdash; can happen, too.
 		</p>
 		<p>
-			This page runs a very simple economy with ten workers who buy from each other. You can control the demand for money (the opposite of the willingness to spend) with the {Katex('\\beta')} slider, and the money supply with the {Katex('M')} slider. The Instruction tab has more detail.
+			To the right is an economy with ten workers who buy from each other. You can control the demand for money (the opposite of the willingness to spend) with the {Katex('\\beta')} slider, and the money supply with the {Katex('M')} slider. The Instruction tab has detail.
 		</p>
 	</div>
 	),
@@ -45,7 +47,7 @@ const explanation = (
 			</p>
 		</div>
 	);
-let texts = { introduction, explanation, comment };
+let texts = { introduction, explanation };
 
 
 const Tab = ({ active_tab, name, on_change }) => {
@@ -60,7 +62,7 @@ const Tab = ({ active_tab, name, on_change }) => {
 
 
 const Text = React.createClass({
-
+	mixins: [PureRenderMixin],
 	getInitialState() {
 		return {
 			tab: 'introduction'

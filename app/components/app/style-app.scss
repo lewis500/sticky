@@ -80,10 +80,20 @@ body {
     background-color: $md-light-blue-900;
     // font-weight: 400;
     font-size: 15px;
+    cursor: pointer;
+    // box-sizing: border-box;
+}
+
+.ll-tab:hover{
+    background-color: rgba($md-light-blue-900,.9);
+    // border: 1px solid rgba($md-blue-900,.5);
+    // box-sizing: border-box;
+    // hover
 }
 
 .ll-tabs {
     text-align: center;
+
 }
 
 .ll-column-one{
@@ -138,6 +148,7 @@ button.btn {
     color: white;
     text-align: center;
     horizontal-align: center;
+    cursor: pointer;
 }
 
 #note {
