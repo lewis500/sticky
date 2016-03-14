@@ -5,16 +5,11 @@
     shape-rendering: crispEdges;
 }
 
-.axis text {
-    fill: $md-blue-grey-600;
-    // fill: white;
-    stroke: none;
-}
 
 .axis line {
     // stroke: $md-grey-100;
     // stroke: white;
-    stroke: $md-blue-grey-300;
+    stroke: $md-grey-300;
     stroke-dasharray: 1.2,1.2;
 }
 

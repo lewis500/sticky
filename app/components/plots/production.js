@@ -1,5 +1,6 @@
 import { connect } from 'react-redux';
 import React from 'react';
+import { findDOMNode } from 'react-dom';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 import d3 from 'd3';
 import '../../style/style-charts.scss';
@@ -13,9 +14,20 @@ const m = {
 	right: 10
 };
 
-
 const ProductionPlot = React.createClass({
 	mixins: [PureRenderMixin],
+	componentDidMount() {
+		let domNode = findDOMNode(this);
+		this.parent = domNode.parentElement;
+		this.resize();
+		this.listener = window.addEventListener('resize', this.resize);
+	},
+	resize() {
+		this.setState({ width: this.parent.clientWidth * .9 });
+	},
+	componentWillUnmount() {
+		window.removeEventListener('resize', this.resize)
+	},
 	getInitialState() {
 		return {
 			xDomain: [0, 10],
@@ -67,7 +79,7 @@ const ProductionPlot = React.createClass({
 			);
 		}
 		return (
-			<div style={{...this.props.style}}>
+			<div style={{...this.props.style, position: 'absolute'}}>
 				<svg 
 					className='chart' 
 					width={width+m.left+m.right}

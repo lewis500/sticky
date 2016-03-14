@@ -11,15 +11,16 @@ import Text from './text';
 
 const AppComponent = React.createClass({
 	paused: true,
+	timer: null,
 	pausePlay() {
 		if (!(this.paused = !this.paused)) {
 			let last = 0,
-				dt = 0,
-				timer = d3Timer
+				dt = 0;
+			this.timer = d3Timer
 				.timer(elapsed => {
 					dt = elapsed - last;
 					last = elapsed;
-					if (this.paused) timer.stop();
+					if (this.paused) this.timer.stop();
 					this.props.tick(dt);
 				});
 		}
@@ -30,13 +31,8 @@ const AppComponent = React.createClass({
 			<div className='flex-container-column main'>
 				<div className='flex-container-row big-row'>
 					<div style={{'flex-basis': '30%', 'marginRight': '30px'}}>
-						<Text pausePlay={this.pausePlay} paused={this.paused} reset={this.props.reset}/>
+						<Text time={this.props.time} pausePlay={this.pausePlay} paused={this.paused} reset={this.props.reset} history_long={this.props.history_long}/>
 						<Rcslider  className='my-slider' min={1} max={10} step={1} value={this.props.β} onChange={this.props.change_β}/>
-					</div>
-					<div className='plot-column' style={{'marginRight': '30px'}}>
-						<ProductionPlot history={this.props.history_long} time={this.props.time} />
-						<ProductionPlot history={this.props.history_long} time={this.props.time} />
-						<ProductionPlot history={this.props.history_long} time={this.props.time} />
 					</div>
 					<div style={{'marginRight': '20px'}}>
 						<Market agents={this.props.agents} trades={this.props.trades} />

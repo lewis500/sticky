@@ -1,5 +1,6 @@
 import React from 'react';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
+import ProductionPlot from '../plots/production';
 
 const styles = {
 	headline: {
@@ -39,15 +40,7 @@ const explanation = (
 			To the right is an economy with ten workers who buy from each other. You can control the demand for money (the opposite of the willingness to spend) with the {Katex('\\beta')} slider, and the money supply with the {Katex('M')} slider. The Instruction tab has detail.
 		</p>
 	</div>
-	),
-	comment = (
-		<div className='ll-text'>
-			<p>
-				A central bank can often print money to keep spending pretty stable, and governments can help by boosting benefits and letting prices and wages change. Most English-speaking and some Nordic countries have central banks, stable benefits and free markets. In the Euro-zone, countries don't control their money, benefits are being cut, and laws make prices inflexible. The latter have bad unemployment.
-			</p>
-		</div>
 	);
-let texts = { introduction, explanation };
 
 
 const Tab = ({ active_tab, name, on_change }) => {
@@ -76,6 +69,16 @@ const Text = React.createClass({
 	},
 
 	render() {
+		const plots = (
+			<div className='ll-text'>
+
+					<div style={{height: '120px'}}>
+						<ProductionPlot history={this.props.history_long} time={this.props.time} />
+					</div>
+				</div>
+		);
+		let texts = { introduction, explanation, plots };
+
 		let asdf = _.keys(texts).map(d => {
 			return <Tab on_change={this.onChange} key={d} name={d} active_tab={this.state.tab}/>
 		});
@@ -101,3 +104,7 @@ const Text = React.createClass({
 });
 
 export default Text;
+
+// <p>
+// 	A central bank can often print money to keep spending pretty stable, and governments can help by boosting benefits and letting prices and wages change. Most English-speaking and some Nordic countries have central banks, stable benefits and free markets. In the Euro-zone, countries don't control their money, benefits are being cut, and laws make prices inflexible. The latter have bad unemployment.
+// </p>

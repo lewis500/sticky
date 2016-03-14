@@ -77,7 +77,7 @@ body {
     align-self: auto;
     text-align: center;
     horizontal-align: center;
-    background-color: $md-light-blue-900;
+    background-color: $md-blue-grey-900;
     // font-weight: 400;
     font-size: 15px;
     cursor: pointer;
@@ -85,7 +85,7 @@ body {
 }
 
 .ll-tab:hover{
-    background-color: rgba($md-light-blue-900,.9);
+    background-color: rgba($md-blue-grey-900,.9);
     // border: 1px solid rgba($md-blue-900,.5);
     // box-sizing: border-box;
     // hover
@@ -101,7 +101,7 @@ body {
     border-radius: 2px;
     // @include shadow-2dp();
     box-shadow: 1px 1px .5px rgba(0,0,0,.4);
-    background-color: $md-light-blue-800;
+    background-color: rgba($md-light-blue-900,.8);
 }
 
 .ll-tab.active{
