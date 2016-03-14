@@ -29,17 +29,17 @@ const AppComponent = React.createClass({
 		return (
 			<div className='flex-container-column main'>
 				<div className='flex-container-row big-row'>
-					<div style={{'flex': '30%', 'marginRight': '30px'}}>
+					<div style={{'flex-basis': '30%', 'marginRight': '30px'}}>
 						<Text pausePlay={this.pausePlay} paused={this.paused} reset={this.props.reset}/>
-
+						<Rcslider  className='my-slider' min={1} max={10} step={1} value={this.props.β} onChange={this.props.change_β}/>
 					</div>
-					<div style={{'marginRight': '20px', 'marginTop': '40px'}}>
+					<div className='plot-column' style={{'marginRight': '30px'}}>
+						<ProductionPlot history={this.props.history_long} time={this.props.time} />
+						<ProductionPlot history={this.props.history_long} time={this.props.time} />
+						<ProductionPlot history={this.props.history_long} time={this.props.time} />
+					</div>
+					<div style={{'marginRight': '20px'}}>
 						<Market agents={this.props.agents} trades={this.props.trades} />
-					</div>
-					<div>
-					<ProductionPlot history={this.props.history} time={this.props.time} />
-					<Rcslider  className='my-slider' min={1} max={10} step={1} value={this.props.β} onChange={this.props.change_β}/>
-
 					</div>
 				</div>
 			</div>

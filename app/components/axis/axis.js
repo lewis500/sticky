@@ -104,7 +104,7 @@ const Axis = React.createClass({
 				translate = transform.replace("{}", position);
 			return (
 				<g key={`${tick}.${index}`} className="tick" transform={translate}>
-		            <line x2={x2} y2={y2} stroke="#aaa"/>
+		            <line x2={x2} y2={y2} />
 		            <text x={x} y={y} dy={dy} textAnchor={textAnchor}>
 		            {tickFormat(tick)}</text>
 		            </g>
@@ -112,7 +112,9 @@ const Axis = React.createClass({
 		});
 		return (
 			<g ref="axis" className={className} transform={this._getTranslate()} style={{shapeRendering: 'crispEdges'}}>
-		        {tickElements}
+		        <g className='g-ticks'> 
+			        {tickElements}
+		        </g>
 		        {pathElement}
 		        {labelElement}
 		    </g>

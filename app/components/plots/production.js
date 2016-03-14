@@ -8,11 +8,10 @@ import col from '../../style/colors';
 
 const m = {
 	top: 10,
-	left: 30,
+	left: 25,
 	bottom: 5,
-	right: 5
+	right: 10
 };
-
 
 
 const ProductionPlot = React.createClass({
@@ -21,8 +20,8 @@ const ProductionPlot = React.createClass({
 		return {
 			xDomain: [0, 10],
 			yDomain: [0, 15],
-			width: 300,
-			height: 160
+			width: 160,
+			height: 80
 		};
 	},
 	xScale(v) {

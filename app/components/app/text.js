@@ -23,14 +23,14 @@ const explanation = (
 			Change {Katex('\\beta')} and {Katex('M')} with the sliders. If you raise {Katex('\\beta')}, people want to hold more money, and spending falls. If you raise M, dollars "split" into new dollars, and spending rises.
 		</p>
 		<p>
-			The price of a widget, {Katex('P')}, depends on how hard workers are working. If each worker is making more than one widget per second, {Katex('P')} goes up. If output is lower than that, {Katex('P')} falls. Thus, the economy's <em>capacity</em> is {Katex('1')} widget/worker/second, or {Katex('10')} widgets/second overall. So, in the long run, you can't control output unless you let {Katex('P')} rise higher and higher.
+			The price of a widget, {Katex('P')}, changes depending on how hard workers are working. Workers would really like to make exactly one widget/sec. If they're making more than that, {Katex('P')} goes up. If they're working less, {Katex('P')} falls. So, in the long run, output goes to {Katex('10')} widgets/sec (the number of workers) unless you keep {Katex('P')} rising or falling. That's the economies' capacity.
 		</p>
 	</div>
 	),
 	introduction = (
 		<div className='ll-text' >
 		<p id="note">
-			Note: For brevity, this visualization uses fixed levels, but, today, rates-of-change are what matter. So swap 'inflation' for 'price,' 'money growth' for 'money,' etc.
+			Note: For brevity, we talk about fixed levels, but, today, rates-of-change are what matter. So swap 'inflation' for 'price,' 'money growth' for 'money,' etc.
 		</p>
 		<p>
 			Recessions happen when individuals, governments and/or firms decide to spend money less quickly. With lower spending, the only way the same amount of stuff gets sold is if prices fall. But prices &mdash; especially wages &mdash; fall slowly. So unless someone makes new money, or something (e.g., a bubble or new technology) makes people spend again, recessions last a long time. The opposite &mdash; a boom with rising prices &mdash; can happen, too.

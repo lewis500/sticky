@@ -119,12 +119,14 @@ const Trades = React.createClass({
 	}
 });
 
+
+
 const Market = ({ agents, trades }) => {
 	return (
-		<svg width='420' height='420'>
-				<g transform='translate(205,205)'>
+		<svg width='510' height='510'>
+				<g transform='translate(255,255)'>
 					{_.map(agents, (d,i,k)=>{
-								let R = 190;
+								let R = 230;
 								return (
 									<g 
 										className={`id-${d.id}`}

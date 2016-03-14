@@ -26,3 +26,13 @@
 .domain{
 	stroke: none;
 }
+
+.tick:not(:first-child):not(:last-child) text{ 
+    // stroke: blue; 
+    // stroke: none;
+    display: none;
+}
+
+
+// g.tick:not(:last-child) line{
+//     stroke: blue;
