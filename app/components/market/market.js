@@ -132,15 +132,12 @@ const Market = ({ agents, trades }) => {
 										className={`id-${d.id}`}
 										transform= {`translate(${R*Math.cos(d.id/k.length*Math.PI*2)}, ${R*Math.sin(d.id/k.length*Math.PI*2)})`}
 										key={d.id}>
-										{
-											<Wealth money={d.money }/>
-										}
-										{circle({
-											className: `agent`,
-											r: 10,
-											key: d.id,
-										})}
-
+										<Wealth money={d.money }/>
+										<circle	
+											className='agent' 
+											r={10}
+											key = {d.id}
+										/>
 								</g>
 								);
 					})}
