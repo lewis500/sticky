@@ -1,13 +1,14 @@
 {
-  "name": "Real Balances",
+  "name": "Sticky prices",
   "version": "1.0.0",
-  "description": "Bus control form",
+  "description": "simulation of what causes recessions and booms",
   "scripts": {
     "start": "node server.js",
     "build": "webpack --config webpack.config.prod.js"
   },
   "repository": {
-    "type": "git"
+    "type": "git",
+    "url": "https://github.com/lewis500/sticky.git"
   },
   "author": "Lewis Lehe <lewis500@gmail.com>",
   "devDependencies": {
